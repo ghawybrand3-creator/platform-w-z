@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>المحاضرات - منصة الأستاذ وائل الشيخ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
+    
+    body {
+      background: #0f172a;
+      min-height: 100vh;
+      padding: 15px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .top-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .back-btn {
+      background: #334155;
+      color: #f1f5f9;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.2s;
+    }
+
+    .back-btn:hover {
+      background: #475569;
+    }
+
+    .page-title {
+      color: #f1f5f9;
+      font-size: 1.2rem;
+      font-weight: 800;
+    }
+
+    .lecture-card {
+      background: #1e293b;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      overflow: hidden;
+      border: 1px solid #334155;
+    }
+
+    .lecture-card.completed {
+      border-color: #10b981;
+    }
+
+    .lecture-header {
+      padding: 15px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .lecture-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .lecture-info {
+      flex: 1;
+      text-align: right;
+    }
+
+    .lecture-info h2 {
+      color: #f1f5f9;
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .lecture-info p {
+      color: #94a3b8;
+      font-size: 0.78rem;
+      line-height: 1.6;
+    }
+
+    .lecture-number {
+      width: 45px;
+      height: 45px;
+      background: #6366f1;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .lecture-card.completed .lecture-number {
+      background: #10b981;
+    }
+
+    .lecture-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .status-badge {
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .status-badge.completed {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+    }
+
+    .status-badge.locked {
+      background: rgba(71, 85, 105, 0.3);
+      color: #94a3b8;
+    }
+
+    .status-badge.active {
+      background: rgba(99, 102, 241, 0.15);
+      color: #818cf8;
+    }
+
+    .toggle-btn {
+      width: 35px;
+      height: 35px;
+      background: #334155;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #94a3b8;
+      font-size: 0.9rem;
+      transition: transform 0.3s;
+    }
+
+    .lecture-card.open .toggle-btn {
+      transform: rotate(180deg);
+    }
+
+    .lecture-content {
+      display: none;
+      padding: 0 15px 15px;
+    }
+
+    .lecture-card.open .lecture-content {
+      display: block;
+    }
+
+    .section {
+      background: #1e293b;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #334155;
+    }
+
+    .section-header {
+      padding: 12px 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      gap: 10px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: #f1f5f9;
+      flex: 1;
+    }
+
+    .section-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    .section-icon.video { background: #f59e0b; }
+    .section-icon.homework { background: #3b82f6; }
+    .section-icon.exam { background: #ef4444; }
+
+    .section-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-status {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 5px;
+    }
+
+    .status-done {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+    }
+
+    .status-pending {
+      background: rgba(245, 158, 11, 0.15);
+      color: #fbbf24;
+    }
+
+    .section-toggle {
+      width: 30px;
+      height: 30px;
+      background: #334155;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #94a3b8;
+      font-size: 0.85rem;
+      transition: transform 0.3s;
+    }
+
+    .section.open .section-toggle {
+      transform: rotate(180deg);
+    }
+
+    .section-body {
+      padding: 12px 15px;
+      display: none;
+      border-top: 1px solid #334155;
+    }
+
+    .section.open .section-body {
+      display: block;
+    }
+
+    .item-row {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 12px;
+      background: #0f172a;
+      border-radius: 8px;
+    }
+
+    .item-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-align: right;
+    }
+
+    .item-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    .item-icon.video { background: rgba(245, 158, 11, 0.2); }
+    .item-icon.homework { background: rgba(59, 130, 246, 0.2); }
+    .item-icon.exam { background: rgba(239, 68, 68, 0.2); }
+
+    .action-btn {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      color: white;
+      width: 100%;
+      text-align: center;
+    }
+
+    .btn-video { background: #f59e0b; }
+    .btn-homework { background: #3b82f6; }
+    .btn-exam { background: #ef4444; }
+
+    .btn:disabled {
+      background: #475569 !important;
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    .warning-msg {
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      color: #fbbf24;
+      padding: 10px 12px;
+      border-radius: 8px;
+      margin-top: 10px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      display: none;
+    }
+
+    .warning-msg.show {
+      display: block;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      z-index: 9999;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+      animation: fadeIn 0.2s;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .modal-box {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 16px;
+      padding: 25px;
+      max-width: 380px;
+      width: 100%;
+      text-align: center;
+      animation: slideUp 0.3s;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .modal-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      margin: 0 auto 15px;
+    }
+
+    .modal-icon.warning {
+      background: rgba(245, 158, 11, 0.15);
+      color: #fbbf24;
+    }
+
+    .modal-icon.info {
+      background: rgba(59, 130, 246, 0.15);
+      color: #60a5fa;
+    }
+
+    .modal-title {
+      color: #f1f5f9;
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .modal-message {
+      color: #94a3b8;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .modal-message strong {
+      color: #f1f5f9;
+      display: block;
+      margin-top: 8px;
+      font-size: 0.85rem;
+      background: #0f172a;
+      padding: 8px 12px;
+      border-radius: 8px;
+      direction: ltr;
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .modal-btn {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Cairo', sans-serif;
+    }
+
+    .modal-btn.cancel {
+      background: #334155;
+      color: #94a3b8;
+    }
+
+    .modal-btn.cancel:hover {
+      background: #475569;
+    }
+
+    .modal-btn.confirm {
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      color: white;
+    }
+
+    .modal-btn.confirm:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4);
+    }
+
+    @media (min-width: 769px) {
+      body { padding: 20px; }
+      .container { max-width: 700px; }
+      .lecture-header { padding: 18px; }
+      .lecture-info h2 { font-size: 1.2rem; }
+      .lecture-info p { font-size: 0.85rem; }
+      .lecture-number { width: 50px; height: 50px; font-size: 1.4rem; }
+      .section-header { padding: 14px 18px; }
+      .section-body { padding: 15px 18px; }
+      .item-row { padding: 14px; }
+      .item-title { font-size: 0.9rem; }
+    }
+  
+    .action-btn:disabled { background: #475569 !important; cursor: not-allowed; opacity: .5; }
+    .action-btn.done { background: #10b981; cursor: default; }
+    .state-box { color:#94a3b8; text-align:center; padding:40px 10px; line-height:1.9; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="top-header">
+    <a href="home.html" class="back-btn">→ رجوع</a>
+    <div class="page-title" id="pageTitle">محتوى الكورس</div>
+    <div style="width: 70px;"></div>
+  </div>
+
+  <div id="lecturesContainer"><div class="state-box">جاري التحميل...</div></div>
+</div>
+
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal-box">
+    <div class="modal-icon warning">⚠️</div>
+    <div class="modal-title" id="modalTitle">تأكيد</div>
+    <div class="modal-message" id="modalMessage"></div>
+    <div class="modal-buttons">
+      <button class="modal-btn cancel" onclick="closeModal()">إلغاء</button>
+      <button class="modal-btn confirm" onclick="modalConfirm()">تأكيد</button>
+    </div>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="api.js"></script>
+<script>
+const courseId = new URLSearchParams(location.search).get('course') || '';
+const KIND = { quiz: ['كويز', '❓', 'homework', 'btn-homework'], homework: ['واجب', '📝', 'homework', 'btn-homework'], exam: ['امتحان', '🎯', 'exam', 'btn-exam'] };
+let lessons = [], modalCallback = null;
+
+function showModal(title, message, onConfirm) {
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('modalMessage').innerHTML = message;
+  modalCallback = onConfirm;
+  document.getElementById('confirmModal').classList.add('active');
+}
+function closeModal() { document.getElementById('confirmModal').classList.remove('active'); modalCallback = null; }
+function modalConfirm() { const cb = modalCallback; closeModal(); if (cb) cb(); }
+document.getElementById('confirmModal').addEventListener('click', function (e) { if (e.target === this) closeModal(); });
+
+function quizSection(l, q) {
+  const k = KIND[q.kind] || KIND.quiz;
+  const done = q.status === 'submitted';
+  const score = done && q.percent !== undefined ? ' — ' + q.score + '/' + q.total : '';
+  const label = done ? '✓ تم التسليم' + score : (q.status === 'started' ? 'كمّل ' + k[0] : 'ابدأ ' + k[0]);
+  const info = (q.timeLimit ? '⏱ ' + q.timeLimit + ' دقيقة • ' : '') + q.questionsCount + ' سؤال';
+  return `
+    <div class="section" id="section-q-${Platform.esc(q.id)}">
+      <div class="section-header" onclick="this.parentNode.classList.toggle('open')">
+        <div class="section-title"><div class="section-icon ${k[2]}">${k[1]}</div><span>${Platform.esc(q.title)}</span></div>
+        <div class="section-right">
+          ${done ? '<span class="section-status status-done">✓ تم</span>' : '<span class="section-status status-pending">لم يُسلَّم</span>'}
+          <div class="section-toggle">▼</div>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="item-row">
+          <div class="item-title"><div class="item-icon ${k[2]}">${k[1]}</div><span>${k[0]} • ${info}</span></div>
+          <button class="action-btn ${k[3]} ${done ? 'done' : ''}" ${(!l.unlocked || done || !q.questionsCount) ? 'disabled' : ''} onclick="confirmQuiz('${Platform.esc(q.id)}', '${Platform.esc(l.id)}')">${label}</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function render() {
+  const box = document.getElementById('lecturesContainer');
+  if (!lessons.length) { box.innerHTML = '<div class="state-box">لسه مفيش محاضرات في الكورس ده.<br>هتظهر هنا أول ما المدرس يضيفها.</div>'; return; }
+  box.innerHTML = lessons.map((l, i) => {
+    const cls = l.completed ? 'completed' : (!l.unlocked ? 'locked' : 'active');
+    const badge = l.completed ? '<span class="status-badge completed">✓ مكتملة</span>' : (!l.unlocked ? '<span class="status-badge locked">مقفلة</span>' : '<span class="status-badge active">متاحة</span>');
+    return `
+      <div class="lecture-card ${cls}" id="lecture-${Platform.esc(l.id)}">
+        <div class="lecture-header" onclick="toggleLecture('${Platform.esc(l.id)}')">
+          <div class="lecture-top">
+            <div class="lecture-info"><h2>${Platform.esc(l.title)}</h2><p>${Platform.esc(l.topics)}</p></div>
+            <div class="lecture-number">${l.completed ? '✓' : i + 1}</div>
+          </div>
+          <div class="lecture-bottom">${badge}<button class="toggle-btn">▼</button></div>
+        </div>
+        <div class="lecture-content">
+          ${!l.unlocked ? '<div class="warning-msg show">⚠️ لازم تخلّص الواجب والامتحانات بتاعة المحاضرة اللي قبلها</div>' : ''}
+          <div class="section open">
+            <div class="section-header" onclick="this.parentNode.classList.toggle('open')">
+              <div class="section-title"><div class="section-icon video">📺</div><span>جزء الشرح</span></div>
+              <div class="section-right">${l.watched ? '<span class="section-status status-done">✓ شاهدت</span>' : ''}<div class="section-toggle">▼</div></div>
+            </div>
+            <div class="section-body">
+              <div class="item-row">
+                <div class="item-title"><div class="item-icon video">▶</div><span>${Platform.esc(l.title)}</span></div>
+                <button class="action-btn btn-video" ${(!l.unlocked || !l.hasVideo) ? 'disabled' : ''} onclick="location.href='lesson.html?id=${encodeURIComponent(l.id)}'">${l.hasVideo ? '▶ مشاهدة المحاضرة' : 'الفيديو لسه مش مرفوع'}</button>
+              </div>
+            </div>
+          </div>
+          ${l.quizzes.map(q => quizSection(l, q)).join('')}
+        </div>
+      </div>`;
+  }).join('');
+  const first = lessons.find(l => l.unlocked && !l.completed) || lessons[lessons.length - 1];
+  if (first) document.getElementById('lecture-' + first.id).classList.add('open');
+}
+
+function toggleLecture(id) {
+  const l = lessons.find(x => x.id === id);
+  if (!l.unlocked) { alert('⚠️ لازم تخلّص الواجب والامتحانات بتاعة المحاضرة اللي قبلها الأول'); return; }
+  document.getElementById('lecture-' + id).classList.toggle('open');
+}
+
+function confirmQuiz(quizId, lessonId) {
+  const l = lessons.find(x => x.id === lessonId); const q = l.quizzes.find(x => x.id === quizId);
+  const k = KIND[q.kind] || KIND.quiz;
+  const timeMsg = q.timeLimit && q.status !== 'started' ? `<br>مدة ${k[0]}: <b>${q.timeLimit} دقيقة</b> والعداد بيبدأ أول ما تدخل ومبيقفش.` : '';
+  showModal('تأكيد البدء', `هل أنت متأكد إنك عايز تبدأ <strong>${Platform.esc(q.title)}</strong>؟ تقدر تسلّمه مرة واحدة بس.${timeMsg}`, () => { location.href = 'quiz.html?id=' + encodeURIComponent(quizId); });
+}
+
+async function init() {
+  if (!Platform.getCode()) { location.href = 'index.html'; return; }
+  try {
+    const r = await Platform.call('course', { courseId: courseId });
+    document.getElementById('pageTitle').textContent = r.course.title;
+    lessons = r.lessons; render();
+  } catch (e) {
+    if (e.code === 'NO_SUB') { location.replace('subscribe.html?course=' + encodeURIComponent(courseId)); return; }
+    document.getElementById('lecturesContainer').innerHTML = '<div class="state-box">' + Platform.esc(e.message) + '<br><br><a class="back-btn" style="display:inline-flex" href="home.html">الرئيسية</a></div>';
+  }
+}
+window.addEventListener('pageshow', e => { if (e.persisted) init(); });
+init();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>الاشتراك في باقة - منصة الأستاذ وائل الشيخ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
+    
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      overflow-y: auto;
+    }
+
+    .main-wrapper {
+      display: flex;
+      width: 100%;
+      min-height: 100vh;
+      max-width: 1400px;
+      margin: 0 auto;
+      background: #fff;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+    }
+
+    .right-side {
+      flex: 1;
+      background: url('اشتراك.png');
+      background-size: cover;
+      background-position: center top;
+      position: relative;
+    }
+
+    .right-side::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.3) 0%, rgba(30, 41, 59, 0.2) 100%);
+    }
+
+    .left-side {
+      flex: 1;
+      padding: 60px 50px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background: #ffffff;
+    }
+
+    .form-container {
+      width: 100%;
+      max-width: 460px;
+      margin: 0 auto;
+    }
+
+    .form-header {
+      text-align: center;
+      margin-bottom: 35px;
+    }
+
+    .form-header h1 {
+      color: #0f172a;
+      font-size: 1.9rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+      letter-spacing: -0.5px;
+    }
+
+    .form-header p {
+      color: #64748b;
+      font-size: 0.95rem;
+      font-weight: 500;
+      line-height: 1.6;
+    }
+
+    .code-box {
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      border-radius: 16px;
+      padding: 25px;
+      margin-bottom: 25px;
+      border: 2px solid #e2e8f0;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    }
+
+    .code-label {
+      font-size: 0.9rem;
+      color: #475569;
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .code-value {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: 2px;
+      direction: ltr;
+      margin-bottom: 15px;
+      font-family: 'Cairo', monospace;
+    }
+
+    .copy-btn {
+      background: #0f172a;
+      color: #fff;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
+    }
+
+    .copy-btn:hover {
+      background: #1e293b;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.3);
+    }
+
+    .steps-box {
+      background: #fff;
+      border-radius: 14px;
+      padding: 22px;
+      margin-bottom: 25px;
+      border: 1.5px solid #f1f5f9;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.04);
+    }
+
+    .steps-title {
+      color: #0f172a;
+      font-size: 1.05rem;
+      font-weight: 800;
+      margin-bottom: 18px;
+      text-align: center;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #f8fafc;
+    }
+
+    .step-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 14px;
+      padding: 10px;
+      border-radius: 10px;
+      transition: all 0.2s;
+    }
+
+    .step-item:hover {
+      background: #f8fafc;
+    }
+
+    .step-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .step-num {
+      background: linear-gradient(135deg, #0f172a, #334155);
+      color: #fff;
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      flex-shrink: 0;
+      font-size: 0.9rem;
+      box-shadow: 0 3px 10px rgba(15, 23, 42, 0.2);
+    }
+
+    .step-text {
+      color: #475569;
+      font-size: 0.9rem;
+      line-height: 1.7;
+      padding-top: 4px;
+      font-weight: 600;
+    }
+
+    .input-group {
+      margin-bottom: 22px;
+    }
+
+    .input-group label {
+      display: block;
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: #0f172a;
+      margin-bottom: 10px;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 14px 18px;
+      border: 2.5px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-align: center;
+      letter-spacing: 2px;
+      outline: none;
+      transition: all 0.3s;
+      direction: ltr;
+      background: #fff;
+      color: #0f172a;
+    }
+
+    .input-group input:focus {
+      border-color: #0f172a;
+      box-shadow: 0 0 0 5px rgba(15, 23, 42, 0.08);
+    }
+
+    .input-group input.error {
+      border-color: #ef4444;
+      background: #fef2f2;
+      animation: shake 0.4s;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-8px); }
+      75% { transform: translateX(8px); }
+    }
+
+    .activate-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.3s;
+      letter-spacing: 0.3px;
+      box-shadow: 0 6px 20px rgba(15, 23, 42, 0.25);
+    }
+
+    .activate-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.35);
+    }
+
+    .activate-btn:active {
+      transform: translateY(-1px);
+    }
+
+    .msg-box {
+      margin-top: 15px;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      display: none;
+      text-align: center;
+      animation: fadeIn 0.3s;
+    }
+
+    .msg-box.success {
+      background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+      color: #15803d;
+      border: 2px solid #86efac;
+      display: block;
+    }
+
+    .msg-box.error {
+      background: linear-gradient(135deg, #fef2f2, #fee2e2);
+      color: #b91c1c;
+      border: 2px solid #fca5a5;
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 768px) {
+      .main-wrapper { 
+        flex-direction: column; 
+        min-height: auto;
+      }
+      
+      .right-side { 
+        height: 35vh; 
+        min-height: 200px; 
+        background-position: center top; 
+      }
+      
+      .left-side { 
+        padding: 35px 25px; 
+        min-height: calc(100vh - 35vh);
+      }
+      
+      .form-header h1 { 
+        font-size: 1.5rem; 
+      }
+      
+      .form-header p {
+        font-size: 0.88rem;
+      }
+      
+      .code-box {
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+      
+      .code-value { 
+        font-size: 1.5rem; 
+      }
+      
+      .steps-box {
+        padding: 18px;
+        margin-bottom: 20px;
+      }
+      
+      .step-item {
+        padding: 8px;
+        margin-bottom: 12px;
+      }
+      
+      .input-group input {
+        padding: 12px 15px;
+        font-size: 1rem;
+      }
+      
+      .activate-btn {
+        padding: 14px;
+        font-size: 1rem;
+      }
+    }
+  
+    .field-input { width:100%; padding:12px 14px; border:1.5px solid #cbd5e1; border-radius:10px; font-size:.95rem; outline:none; background:#fff; color:#0f172a; direction:ltr; text-align:right; }
+    .field-input:focus { border-color:#3b82f6; box-shadow:0 0 0 3px rgba(59,130,246,.1); }
+    .input-group { margin-bottom:12px; }
+    .input-group label { display:block; margin-bottom:5px; font-weight:700; font-size:.88rem; color:#334155; }
+    .input-group small { color:#64748b; font-size:.78rem; }
+    .price-pill { display:inline-block; background:#0f172a; color:#fbbf24; padding:6px 16px; border-radius:20px; font-weight:800; margin-top:8px; }
+    .status-card { text-align:center; padding:22px 16px; border-radius:14px; margin-bottom:16px; font-weight:700; line-height:1.8; }
+    .status-card.pending { background:#fef3c7; color:#92400e; border:2px solid #fde68a; }
+    .status-card.rejected { background:#fee2e2; color:#b91c1c; border:2px solid #fca5a5; }
+    .back-link { display:inline-block; margin-bottom:12px; color:#475569; font-weight:700; text-decoration:none; font-size:.9rem; }
+  </style>
+</head>
+<body>
+
+<div class="main-wrapper">
+  <div class="right-side"></div>
+
+  <div class="left-side">
+    <div class="form-container">
+      <a class="back-link" href="home.html">→ رجوع للرئيسية</a>
+      <div class="form-header">
+        <h1 id="courseTitle">الاشتراك في الباقة</h1>
+        <p>أكمل الخطوات لتفعيل اشتراكك والوصول إلى المحاضرات</p>
+        <span class="price-pill" id="coursePrice"></span>
+      </div>
+
+      <div id="stateBox"></div>
+
+      <div id="formBox" style="display:none">
+        <div class="code-box">
+          <div class="code-label">💳 رقم فودافون كاش</div>
+          <div class="code-value" id="vodafoneNum">---</div>
+          <button class="copy-btn" onclick="copyNumber()"><span>📋</span><span>نسخ الرقم</span></button>
+        </div>
+
+        <div class="steps-box">
+          <div class="steps-title">📝 خطوات الاشتراك</div>
+          <div class="step-item"><div class="step-num">1</div><div class="step-text">حوّل مبلغ الاشتراك على الرقم أعلاه</div></div>
+          <div class="step-item"><div class="step-num">2</div><div class="step-text">اكتب الرقم اللي حوّلت منه ورقم العملية (لو ظهرلك)</div></div>
+          <div class="step-item"><div class="step-num">3</div><div class="step-text">اضغط «إرسال طلب التفعيل»</div></div>
+          <div class="step-item"><div class="step-num">4</div><div class="step-text">بعد مراجعة التحويل هيتفعل اشتراكك وهيوصلك إشعار</div></div>
+        </div>
+
+        <div class="input-group">
+          <label>📱 الرقم اللي حوّلت منه</label>
+          <input type="tel" class="field-input" id="senderPhone" placeholder="01XXXXXXXXX" maxlength="11" autocomplete="off">
+        </div>
+        <div class="input-group">
+          <label>🧾 رقم العملية (اختياري)</label>
+          <input type="text" class="field-input" id="refNo" placeholder="رقم العملية من رسالة فودافون كاش" maxlength="60" autocomplete="off">
+          <small>بيساعدنا نراجع التحويل أسرع</small>
+        </div>
+
+        <button class="activate-btn" id="sendBtn" onclick="sendRequest()">🚀 إرسال طلب التفعيل</button>
+      </div>
+      <div id="subMsg" class="msg-box"></div>
+    </div>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="api.js"></script>
+<script>
+const courseId = new URLSearchParams(location.search).get('course') || '';
+let settings = {}, course = null;
+
+function showMsg(text, type) {
+  const m = document.getElementById('subMsg');
+  m.className = 'msg-box ' + type; m.textContent = text;
+}
+
+function copyNumber() {
+  const num = document.getElementById('vodafoneNum').textContent;
+  const done = () => {
+    const btn = document.querySelector('.copy-btn');
+    btn.innerHTML = '<span>✅</span><span>تم النسخ!</span>';
+    setTimeout(() => { btn.innerHTML = '<span>📋</span><span>نسخ الرقم</span>'; }, 2000);
+  };
+  if (navigator.clipboard) navigator.clipboard.writeText(num).then(done).catch(() => {});
+}
+
+async function init() {
+  if (!Platform.getCode()) { location.href = 'index.html'; return; }
+  try {
+    const r = await Platform.call('home');
+    settings = r.settings || {};
+    course = (r.courses || []).find(c => c.id === courseId);
+    if (!course) { document.getElementById('stateBox').innerHTML = '<div class="status-card rejected">الباقة دي مش متاحة. ارجع للرئيسية واختار باقة.</div>'; return; }
+    document.getElementById('courseTitle').textContent = course.title;
+    document.getElementById('coursePrice').textContent = 'المبلغ المطلوب: ' + course.price + ' جنيه';
+    document.getElementById('vodafoneNum').textContent = settings.vodafoneNumber || '---';
+    if (course.status === 'active') { location.replace('lectures.html?course=' + encodeURIComponent(course.id)); return; }
+    if (course.status === 'pending') {
+      document.getElementById('stateBox').innerHTML = '<div class="status-card pending">⏳ طلبك قيد المراجعة<br><small>هيتفعل اشتراكك بمجرد التأكد من التحويل، وهيوصلك إشعار. لو اتأخر كلّمنا على ' + Platform.esc(settings.supportNumber || '') + '</small></div>';
+      return;
+    }
+    if (course.status === 'rejected') {
+      document.getElementById('stateBox').innerHTML = '<div class="status-card rejected">تعذر تفعيل طلبك السابق. راجع الإشعارات في الصفحة الرئيسية، ولو حوّلت فعلاً ابعت الطلب تاني بالبيانات الصحيحة.</div>';
+    }
+    document.getElementById('formBox').style.display = 'block';
+  } catch (e) { showMsg(e.message, 'error'); }
+}
+
+async function sendRequest() {
+  const phone = document.getElementById('senderPhone').value.replace(/\s+/g, '');
+  if (!/^01[0125][0-9]{8}$/.test(phone)) { showMsg('اكتب الرقم اللي حوّلت منه (11 رقم يبدأ بـ 01)', 'error'); return; }
+  await Platform.busy(document.getElementById('sendBtn'), async () => {
+    try {
+      const r = await Platform.call('requestSub', { courseId: courseId, senderPhone: phone, ref: document.getElementById('refNo').value.trim() });
+      document.getElementById('formBox').style.display = 'none';
+      document.getElementById('stateBox').innerHTML = '<div class="status-card pending">✅ ' + Platform.esc(r.message) + '</div>';
+      document.getElementById('subMsg').className = 'msg-box';
+    } catch (e) { showMsg(e.message, 'error'); }
+  });
+}
+
+init();
+</script>
+
+</body>
+</html>

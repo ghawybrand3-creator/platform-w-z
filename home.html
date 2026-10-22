@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>وائل الشيخ | أول معلم إنجليزي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Cairo:wght@400;600;700;800&family=Poppins:wght@600;700;800&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --primary: #7c3aed; --primary-dark: #5b21b6; --primary-light: #a78bfa; --gold: #fbbf24; --gold-dark: #f59e0b; --bg: #fafafa; --surface: #ffffff; --text: #1f2937; --text-muted: #6b7280; --border: #e5e7eb; --shadow: 0 2px 8px rgba(0,0,0,0.06); --shadow-md: 0 8px 24px rgba(124, 58, 237, 0.12); }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: var(--bg); color: var(--text); font-family: 'Tajawal', sans-serif; line-height: 1.6; overflow-x: hidden; }
+        .display-font { font-family: 'Lalezar', cursive; letter-spacing: 0.5px; }
+        
+        .header { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); padding: 12px 24px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3); }
+        
+        /* --- أنيميشن الهيدر الجديد --- */
+        .logo-animated {
+            display: grid;
+            grid-template-areas: "stack";
+            align-items: center;
+            font-size: 1.25rem;
+            color: #fff;
+            min-width: 260px;
+        }
+        .logo-animated span {
+            grid-area: stack;
+            white-space: nowrap;
+        }
+        .text-name {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            letter-spacing: 1px;
+            animation: animName 12s infinite ease-in-out;
+        }
+        .text-wael {
+            color: #fff;
+        }
+        .text-elsheikh {
+            color: var(--gold);
+            text-shadow: 0 0 8px rgba(251, 191, 36, 0.4);
+        }
+        .text-title {
+            font-family: 'Tajawal', sans-serif;
+            font-weight: 700;
+            color: var(--gold);
+            animation: animTitle 12s infinite ease-in-out;
+        }
+
+        @keyframes animName {
+            0%, 100% { opacity: 0; transform: translateY(10px); filter: blur(3px); }
+            5%, 45% { opacity: 1; transform: translateY(0); filter: blur(0); }
+            50%, 95% { opacity: 0; transform: translateY(-10px); filter: blur(3px); }
+        }
+        @keyframes animTitle {
+            0%, 45% { opacity: 0; transform: translateY(10px); filter: blur(3px); }
+            50%, 85% { opacity: 1; transform: translateY(0); filter: blur(0); text-shadow: 0 0 15px rgba(251, 191, 36, 0.8); }
+            90%, 100% { opacity: 0; transform: translateY(-10px); filter: blur(3px); }
+        }
+        /* ----------------------------- */
+
+        .menu-toggle { cursor: pointer; display: flex; flex-direction: column; gap: 5px; padding: 10px; background: rgba(255,255,255,0.15); border-radius: 10px; transition: 0.3s; position: relative; z-index: 1002; }
+        .menu-toggle:hover { background: rgba(255,255,255,0.25); transform: scale(1.05); }
+        .menu-toggle span { width: 24px; height: 2.5px; background: #fff; border-radius: 2px; transition: 0.3s; }
+        
+        .dropdown-menu { position: fixed; top: 0; right: -300px; width: 300px; height: 100vh; background: var(--surface); box-shadow: -5px 0 30px rgba(0,0,0,0.15); transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1001; padding: 25px 20px; display: flex; flex-direction: column; }
+        .dropdown-menu.active { right: 0; }
+        .menu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding-bottom: 15px; border-bottom: 2px solid var(--border); }
+        .menu-header h3 { font-family: 'Tajawal', sans-serif; color: var(--primary); font-size: 1.4rem; font-weight: 700; }
+        .close-menu { background: none; border: none; font-size: 1.5rem; color: var(--text-muted); cursor: pointer; transition: 0.2s; }
+        .close-menu:hover { color: var(--primary); transform: rotate(90deg); }
+        
+        .menu-item { display: flex; align-items: center; gap: 15px; padding: 14px 18px; margin-bottom: 10px; background: var(--bg); border-radius: 12px; cursor: pointer; text-decoration: none; color: var(--text); font-weight: 600; transition: 0.2s; border: 1px solid transparent; font-family: 'Tajawal', sans-serif; }
+        .menu-item i { width: 24px; text-align: center; font-size: 1.1rem; color: var(--primary); transition: 0.2s; }
+        .menu-item:hover { background: var(--primary); color: #fff; transform: translateX(-5px); box-shadow: 0 5px 15px rgba(124, 58, 237, 0.2); }
+        .menu-item:hover i { color: #fff; }
+        
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); opacity: 0; visibility: hidden; transition: 0.3s; z-index: 1000; backdrop-filter: blur(3px); }
+        .overlay.active { opacity: 1; visibility: visible; }
+        
+        .hero-section { width: 100%; position: relative; overflow: hidden; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; background: var(--primary); display: flex; justify-content: center; align-items: flex-end; padding-bottom: 40px; box-shadow: var(--shadow-md); aspect-ratio: 21 / 9; }
+        .hero-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 76% center; }
+        .hero-section::before { content: ""; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(15, 23, 42, 0) 40%, rgba(15, 23, 42, 0.6) 100%); z-index: 1; }
+        .hero-content { position: relative; z-index: 2; }
+        
+        .btn-gold { font-family: 'Tajawal', sans-serif; font-weight: 700; background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); color: #1a1a2e; padding: 14px 40px; border-radius: 12px; border: none; font-size: 1.1rem; cursor: pointer; text-decoration: none; display: inline-block; box-shadow: 0 6px 20px rgba(251, 191, 36, 0.4); transition: 0.3s; letter-spacing: 0.5px; }
+        .btn-gold:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 10px 30px rgba(251, 191, 36, 0.6); }
+        
+        .section-label { text-align: center; margin: 25px auto; padding: 0 20px; }
+        .label-box { display: inline-block; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border-radius: 30px; padding: 10px 28px; box-shadow: var(--shadow-md); }
+        .label-box h2 { font-family: 'Tajawal', sans-serif; font-size: 1.2rem; color: #fff; letter-spacing: 0.5px; font-weight: 700; }
+        
+        .packages-section { max-width: 900px; margin: 0 auto; padding: 0 20px; }
+        .packages-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 30px; }
+        .package-card { background: var(--surface); border-radius: 16px; overflow: hidden; border: 2px solid var(--border); cursor: pointer; transition: 0.3s; box-shadow: var(--shadow); }
+        .package-card:hover { border-color: var(--primary); transform: translateY(-4px); box-shadow: var(--shadow-md); }
+        .package-image { aspect-ratio: 16 / 10; overflow: hidden; background: var(--primary); }
+        .package-image img { width: 100%; height: 100%; object-fit: cover; object-position: center 20%; display: block; }
+        .package-content { padding: 15px; }
+        .package-content h3 { font-family: 'Tajawal', sans-serif; font-size: 1.1rem; color: var(--primary); margin-bottom: 5px; font-weight: 700; }
+        .package-content p { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 10px; font-family: 'Tajawal', sans-serif; }
+        .package-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 10px; border-top: 1px solid var(--border); }
+        .package-price { font-family: 'Tajawal', sans-serif; font-size: 1.4rem; color: var(--gold-dark); font-weight: 700; }
+        .package-price span { font-family: 'Tajawal', sans-serif; font-size: 0.8rem; color: var(--text-muted); font-weight: 500; }
+        .package-btn { background: var(--primary); color: #fff; padding: 7px 16px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; font-size: 0.9rem; transition: 0.2s; font-family: 'Tajawal', sans-serif; }
+        .package-btn:hover { background: var(--primary-dark); }
+        
+        .store-section { max-width: 1000px; margin: 0 auto 40px; padding: 0 20px; position: relative; }
+        .store-header { text-align: center; margin-bottom: 20px; }
+        .store-header h2 { font-family: 'Tajawal', sans-serif; font-size: 1.8rem; color: var(--primary); margin-bottom: 5px; font-weight: 800; }
+        .store-header h2 span { color: var(--gold-dark); }
+        .store-header p { color: var(--text-muted); font-size: 0.95rem; font-family: 'Tajawal', sans-serif; }
+        
+        .carousel-container { position: relative; overflow: hidden; padding: 10px 0; }
+        .products-track { display: flex; gap: 20px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); will-change: transform; }
+        .product-card { min-width: calc(33.333% - 14px); background: var(--surface); border-radius: 16px; overflow: hidden; border: 2px solid var(--border); transition: 0.3s; box-shadow: var(--shadow); flex-shrink: 0; }
+        .product-card:hover { border-color: var(--gold); transform: translateY(-4px); box-shadow: var(--shadow-md); }
+        
+        .product-image { width: 100%; height: 250px; overflow: hidden; background: var(--bg); }
+        .product-image img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        
+        .product-info { padding: 14px; text-align: center; }
+        .product-info h4 { font-family: 'Tajawal', sans-serif; font-size: 1.1rem; color: var(--text); margin-bottom: 5px; font-weight: 700; }
+        .product-info .price { font-family: 'Tajawal', sans-serif; font-size: 1.3rem; color: var(--gold-dark); margin-bottom: 10px; font-weight: 700; }
+        .add-to-cart { width: 100%; padding: 9px; background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #1a1a2e; border: none; border-radius: 10px; font-family: 'Tajawal', sans-serif; font-size: 0.95rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: 0.3s; }
+        .add-to-cart:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(251, 191, 36, 0.4); }
+        
+        .carousel-btn { position: absolute; top: 55%; transform: translateY(-50%); width: 45px; height: 45px; border-radius: 50%; background: var(--surface); border: 2px solid var(--border); color: var(--primary); font-size: 1.2rem; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .carousel-btn:hover { background: var(--primary); color: #fff; border-color: var(--primary); transform: translateY(-50%) scale(1.1); }
+        .carousel-btn.prev { left: -10px; }
+        .carousel-btn.next { right: -10px; }
+        
+        .contact-section { max-width: 1000px; margin: 0 auto 40px; padding: 0 20px; }
+        .contact-card { border-radius: 20px; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(124, 58, 237, 0.3); background-image: url('كلمنا.png'); background-size: cover; background-position: center center; min-height: 300px; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 20px; }
+        .contact-card::before { content: ""; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(124, 58, 237, 0.2) 0%, rgba(124, 58, 237, 0.6) 100%); z-index: 1; }
+        .contact-content { position: relative; z-index: 2; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 15px; }
+        .contact-phone-badge { display: inline-flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.95); padding: 10px 20px; border-radius: 40px; box-shadow: 0 6px 20px rgba(0,0,0,0.2); transition: 0.3s; backdrop-filter: blur(10px); }
+        .contact-phone-badge:hover { transform: translateY(-2px); background: #fff; }
+        .contact-phone-badge i { color: var(--primary); font-size: 1.2rem; }
+        .contact-phone-wrapper { text-align: right; }
+        .contact-phone-text { font-weight: 600; color: var(--text-muted); font-size: 0.8rem; margin-bottom: 1px; font-family: 'Tajawal', sans-serif; }
+        .contact-phone-number { font-family: 'Tajawal', sans-serif; color: var(--primary); font-size: 1.3rem; direction: ltr; letter-spacing: 0.8px; display: block; font-weight: 700; }
+        
+        .cart-badge {
+            position: fixed; bottom: 20px; left: 20px; background: var(--gold); color: #1a1a2e; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; cursor: pointer; box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4); z-index: 999; transition: 0.3s;
+        }
+        .cart-badge:hover { transform: scale(1.1); box-shadow: 0 6px 20px rgba(251, 191, 36, 0.6); }
+        .cart-count { position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; }
+        
+        .cart-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); z-index: 1002; display: none; justify-content: center; align-items: center; padding: 20px; }
+        .cart-modal.active { display: flex; }
+        .cart-box { background: white; border-radius: 20px; padding: 25px; max-width: 500px; width: 100%; max-height: 80vh; overflow-y: auto; }
+        .cart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid var(--border); }
+        .cart-header h3 { font-family: 'Tajawal', sans-serif; color: var(--primary); font-size: 1.4rem; font-weight: 700; }
+        .close-cart { background: none; border: none; font-size: 1.5rem; color: var(--text-muted); cursor: pointer; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--bg); border-radius: 10px; margin-bottom: 10px; }
+        .cart-item-info h4 { font-size: 0.95rem; margin-bottom: 3px; font-family: 'Tajawal', sans-serif; font-weight: 600; }
+        .cart-item-price { color: var(--gold-dark); font-weight: 700; font-family: 'Tajawal', sans-serif; }
+        .remove-item { background: #ef4444; color: white; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .cart-total { margin-top: 20px; padding-top: 15px; border-top: 2px solid var(--border); text-align: center; font-size: 1.2rem; font-weight: 700; color: var(--primary); font-family: 'Tajawal', sans-serif; }
+        .whatsapp-btn { width: 100%; padding: 14px; background: #25d366; color: white; border: none; border-radius: 10px; font-family: 'Tajawal', sans-serif; font-size: 1.1rem; font-weight: 700; cursor: pointer; margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.3s; }
+        .whatsapp-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4); }
+        .empty-cart { text-align: center; padding: 40px; color: var(--text-muted); font-family: 'Tajawal', sans-serif; }
+        
+        @media (max-width: 1024px) { .hero-section { aspect-ratio: 16 / 9; } .packages-grid { grid-template-columns: repeat(2, 1fr); } .product-card { min-width: calc(50% - 10px); } }
+        @media (max-width: 768px) { 
+            .hero-section { aspect-ratio: 4 / 3; border-radius: 0 0 20px 20px; } 
+            .packages-grid { grid-template-columns: 1fr; } 
+            .product-card { min-width: calc(70% - 10px); } 
+            .carousel-btn { width: 38px; height: 38px; font-size: 1rem; } 
+            .carousel-btn.prev { left: 0; } 
+            .carousel-btn.next { right: 0; } 
+            .contact-card { min-height: 250px; }
+            .cart-badge { width: 50px; height: 50px; font-size: 1.2rem; }
+            .logo-animated { min-width: 220px; font-size: 1.1rem; }
+        }
+        @media (max-width: 480px) { 
+            .hero-section { aspect-ratio: 3 / 4; border-radius: 0 0 16px 16px; padding-bottom: 20px; } 
+            .btn-gold { padding: 10px 28px; font-size: 1rem; } 
+            .packages-grid { grid-template-columns: 1fr; } 
+            .product-card { min-width: 85%; } 
+            .contact-card { min-height: 220px; } 
+            .contact-phone-number { font-size: 1.1rem; }
+            .logo-animated { min-width: 200px; font-size: 1rem; }
+        }
+
+        .bell { position: relative; cursor: pointer; padding: 10px 12px; background: rgba(255,255,255,0.15); border-radius: 10px; color: #fff; margin-left: 10px; transition: 0.3s; }
+        .bell:hover { background: rgba(255,255,255,0.25); }
+        .bell-count { position: absolute; top: -6px; right: -6px; background: #ef4444; color: #fff; min-width: 20px; height: 20px; border-radius: 10px; font-size: .7rem; font-weight: 700; display: flex; align-items: center; justify-content: center; padding: 0 5px; }
+        .header-actions { display: flex; align-items: center; }
+        .pkg-badge { display: inline-block; font-size: .72rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; margin-bottom: 8px; }
+        .pkg-badge.active { background: #dcfce7; color: #15803d; }
+        .pkg-badge.pending { background: #fef3c7; color: #92400e; }
+        .pkg-badge.rejected { background: #fee2e2; color: #b91c1c; }
+        .package-btn.ok { background: #10b981; } .package-btn.wait { background: #f59e0b; }
+        .notif-item { padding: 12px; background: var(--bg); border-radius: 10px; margin-bottom: 10px; border-right: 4px solid var(--border); }
+        .notif-item.unread { border-right-color: var(--primary); background: #f5f3ff; }
+        .notif-item h4 { font-size: .95rem; color: var(--primary); margin-bottom: 3px; font-weight: 700; }
+        .notif-item p { font-size: .88rem; color: var(--text); line-height: 1.6; }
+        .notif-item small { color: var(--text-muted); font-size: .75rem; }
+        .loading-box { text-align: center; padding: 40px; color: var(--text-muted); grid-column: 1 / -1; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo-animated">
+            <span class="text-name">
+                <span class="text-wael">Wael</span> <span class="text-elsheikh">El-Sheikh</span>
+            </span>
+            <span class="text-title">معلم اول "English"</span>
+        </div>
+        <div class="header-actions">
+            <div class="bell" onclick="showNotifs()" title="الإشعارات"><i class="fas fa-bell"></i><span class="bell-count" id="bellCount" style="display:none">0</span></div>
+            <div class="menu-toggle" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </header>
+
+    <div class="overlay" onclick="toggleMenu()"></div>
+    <div class="dropdown-menu" id="dropdownMenu">
+        <div class="menu-header">
+            <h3>القائمة</h3>
+            <button class="close-menu" onclick="toggleMenu()"><i class="fas fa-times"></i></button>
+        </div>
+        <a href="admin.html" class="menu-item"><i class="fas fa-user"></i><span>admin</span></a>
+        <a href="#" class="menu-item" onclick="goPackages(); return false;"><i class="fas fa-chalkboard-teacher"></i><span>المحاضرات</span></a>
+        <a href="#" class="menu-item" onclick="showNotifs(); return false;"><i class="fas fa-bell"></i><span>الإشعارات</span></a>
+        <a href="#" class="menu-item" onclick="showCart(); return false;"><i class="fas fa-shopping-cart"></i><span>سلة المشتريات</span></a>
+        <a href="#" class="menu-item" onclick="logout(); return false;"><i class="fas fa-sign-out-alt"></i><span>تسجيل الخروج</span></a>
+    </div>
+
+    <section class="hero-section">
+        <img src="البنر.png" alt="" class="hero-bg" onerror="this.style.display='none'">
+        <div class="hero-content">
+            <a href="#" class="btn-gold" onclick="goPackages(); return false;">محاضراتك</a>
+        </div>
+    </section>
+
+    <div class="section-label">
+        <div class="label-box"><h2>كل ما يخص المنهج</h2></div>
+    </div>
+
+    <section class="packages-section" id="packagesSection">
+        <div class="packages-grid" id="packagesGrid"><div class="loading-box">جاري تحميل الباقات...</div></div>
+    </section>
+
+    <section class="store-section">
+        <div class="store-header">
+            <h2>غاوي<span>.</span>ستور</h2>
+           <p>منصه حيث يمكنك شراء منتج تعليمي</p>
+        </div>
+        <button class="carousel-btn prev" onclick="moveCarousel(-1)"><i class="fas fa-chevron-right"></i></button>
+        <div class="carousel-container">
+            <div class="products-track" id="productsTrack">
+                <div class="product-card">
+                    <div class="product-image"><img src="نوته.png" alt="نوته" onerror="this.src='https://via.placeholder.com/300x300/7c3aed/fff?text=Notebook'"></div>
+                    <div class="product-info"><h4>نوته</h4><div class="price">45 جنيه</div><button class="add-to-cart" onclick="addToCart('نوته', 45)"><i class="fas fa-cart-plus"></i> أضف للسلة</button></div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image"><img src="لخص دروسك.jpeg" alt="لخص دروسك" onerror="this.src='https://via.placeholder.com/300x300/fbbf24/1a1a2e?text=Summary'"></div>
+                    <div class="product-info"><h4>لخص دروسك</h4><div class="price">60 جنيه</div><button class="add-to-cart" onclick="addToCart('لخص دروسك', 60)"><i class="fas fa-cart-plus"></i> أضف للسلة</button></div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image"><img src="سناده.jpeg" alt="سنادة" onerror="this.src='https://via.placeholder.com/300x300/8e24aa/fff?text=Support'"></div>
+                    <div class="product-info"><h4>سنادة</h4><div class="price">35 جنيه</div><button class="add-to-cart" onclick="addToCart('سنادة', 35)"><i class="fas fa-cart-plus"></i> أضف للسلة</button></div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image"><img src="استيكرز.jpeg" alt="استيكرز" onerror="this.src='https://via.placeholder.com/300x300/ef4444/fff?text=Stickers'"></div>
+                    <div class="product-info"><h4>استيكرز</h4><div class="price">25 جنيه</div><button class="add-to-cart" onclick="addToCart('استيكرز', 25)"><i class="fas fa-cart-plus"></i> أضف للسلة</button></div>
+                </div>
+            </div>
+        </div>
+        <button class="carousel-btn next" onclick="moveCarousel(1)"><i class="fas fa-chevron-left"></i></button>
+    </section>
+
+    <section class="contact-section">
+        <div class="contact-card">
+            <div class="contact-content">
+                <div class="contact-phone-badge">
+                    <i class="fas fa-headset"></i>
+                    <div class="contact-phone-wrapper">
+                        <div class="contact-phone-text">رقم الدعم</div>
+                        <div class="contact-phone-number" id="supportNumber">01505786505</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="cart-badge" onclick="showCart()">
+        <i class="fas fa-shopping-cart"></i>
+        <span class="cart-count" id="cartCount">0</span>
+    </div>
+
+    <div class="cart-modal" id="cartModal">
+        <div class="cart-box">
+            <div class="cart-header">
+                <h3>سلة المشتريات</h3>
+                <button class="close-cart" onclick="closeCart()"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="cartItems"></div>
+            <div class="cart-total" id="cartTotal"></div>
+            <button class="whatsapp-btn" onclick="sendToWhatsApp()">
+                <i class="fab fa-whatsapp"></i>
+                إرسال الطلب عبر واتساب
+            </button>
+        </div>
+    </div>
+
+    <div class="cart-modal" id="notifModal">
+        <div class="cart-box">
+            <div class="cart-header">
+                <h3>الإشعارات</h3>
+                <button class="close-cart" onclick="closeNotifs()">✕</button>
+            </div>
+            <div id="notifList"></div>
+        </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="api.js"></script>
+    <script>
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        
+        function updateCart() {
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartCount();
+        }
+        
+        function updateCartCount() {
+            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cartCount').textContent = count;
+        }
+        
+        function addToCart(name, price) {
+            const existingItem = cart.find(item => item.name === name);
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ name, price, quantity: 1 });
+            }
+            updateCart();
+            
+            const btn = event.target.closest('.add-to-cart');
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check"></i> تمت الإضافة';
+            btn.style.background = '#10b981';
+            setTimeout(() => {
+                btn.innerHTML = originalHTML;
+                btn.style.background = '';
+            }, 1500);
+        }
+        
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCart();
+            showCart();
+        }
+        
+        function showCart() {
+            const modal = document.getElementById('cartModal');
+            const itemsContainer = document.getElementById('cartItems');
+            const totalElement = document.getElementById('cartTotal');
+            
+            if (cart.length === 0) {
+                itemsContainer.innerHTML = '<div class="empty-cart"><i class="fas fa-shopping-cart" style="font-size: 3rem; margin-bottom: 15px; opacity: 0.3;"></i><p>السلة فارغة</p></div>';
+                totalElement.innerHTML = '';
+            } else {
+                itemsContainer.innerHTML = cart.map((item, index) => `
+                    <div class="cart-item">
+                        <div class="cart-item-info">
+                            <h4>${item.name}</h4>
+                            <div class="cart-item-price">${item.price} جنيه × ${item.quantity}</div>
+                        </div>
+                        <button class="remove-item" onclick="removeFromCart(${index})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `).join('');
+                
+                const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                totalElement.innerHTML = `الإجمالي: ${total} جنيه`;
+            }
+            
+            modal.classList.add('active');
+            document.querySelector('.overlay').classList.add('active');
+        }
+        
+        function closeCart() {
+            document.getElementById('cartModal').classList.remove('active');
+            document.querySelector('.overlay').classList.remove('active');
+        }
+        
+        function sendToWhatsApp() {
+            if (cart.length === 0) {
+                alert('السلة فارغة!');
+                return;
+            }
+            
+            const userData = { sName: me ? me.name : '', sPhone: me ? me.phone : '' };
+            
+            let message = '*طلب جديد من المنصة*%0A%0A';
+            message += `*الاسم:* ${encodeURIComponent(userData.sName || 'غير معروف')}%0A`;
+            message += `*رقم الهاتف:* ${userData.sPhone || 'غير معروف'}%0A%0A`;
+            message += '*الطلبات:*%0A';
+            
+            let total = 0;
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                message += `• ${encodeURIComponent(item.name)} - ${item.price} جنيه × ${item.quantity} = ${itemTotal} جنيه%0A`;
+                total += itemTotal;
+            });
+            
+            message += `%0A*الإجمالي: ${total} جنيه*`;
+            
+            const whatsappNumber = Platform.waNumber(settings.supportNumber) || '201505786505';
+            const whatsappURL = `https://wa.me/${whatsappNumber}?text=${message}`;
+            
+            window.open(whatsappURL, '_blank');
+            
+            cart = [];
+            updateCart();
+            closeCart();
+        }
+
+        let me = null, settings = {}, courses = [];
+
+        function goPackages() {
+            document.getElementById('dropdownMenu').classList.remove('active');
+            document.querySelector('.overlay').classList.remove('active');
+            document.getElementById('packagesSection').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function setUnread(n) {
+            const el = document.getElementById('bellCount');
+            el.textContent = n > 9 ? '9+' : n;
+            el.style.display = n > 0 ? 'flex' : 'none';
+        }
+
+        function renderPackages() {
+            const grid = document.getElementById('packagesGrid');
+            if (!courses.length) { grid.innerHTML = '<div class="loading-box">لا توجد باقات متاحة لصفك حالياً</div>'; return; }
+            const label = { active: 'ادخل', pending: 'قيد المراجعة', rejected: 'أعد الطلب', none: 'اشترك' };
+            const badge = { active: '<span class="pkg-badge active">✓ مشترك</span>', pending: '<span class="pkg-badge pending">⏳ طلبك قيد المراجعة</span>', rejected: '<span class="pkg-badge rejected">تعذر التفعيل — راجع الإشعارات</span>', none: '' };
+            grid.innerHTML = courses.map(c => {
+                const img = c.image || (c.type === 'term' ? 'باقه الترم.png' : 'باقه الشهر الاول.png');
+                const cls = c.status === 'active' ? 'ok' : (c.status === 'pending' ? 'wait' : '');
+                return `<div class="package-card" onclick="openPackage('${Platform.esc(c.id)}')">
+                    <div class="package-image"><img src="${Platform.esc(img)}" alt="${Platform.esc(c.title)}" onerror="this.onerror=null;this.src='https://via.placeholder.com/400x250/7c3aed/fbbf24?text=${encodeURIComponent(c.title)}'"></div>
+                    <div class="package-content">
+                        ${badge[c.status] || ''}
+                        <h3>${Platform.esc(c.title)}</h3>
+                        <p>${Platform.esc(c.description)}</p>
+                        <div class="package-footer">
+                            <div class="package-price">${c.price} <span>جنيه</span></div>
+                            <button class="package-btn ${cls}">${label[c.status] || 'اشترك'}</button>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function openPackage(id) {
+            const c = courses.find(x => x.id === id);
+            if (!c) return;
+            window.location.href = (c.status === 'active' ? 'lectures.html?course=' : 'subscribe.html?course=') + encodeURIComponent(id);
+        }
+
+        async function loadHome() {
+            try {
+                const r = await Platform.call('home');
+                me = r.student; settings = r.settings || {}; courses = r.courses || [];
+                if (settings.supportNumber) document.getElementById('supportNumber').textContent = settings.supportNumber;
+                setUnread(r.unread || 0);
+                renderPackages();
+            } catch (e) {
+                document.getElementById('packagesGrid').innerHTML = '<div class="loading-box">' + Platform.esc(e.message) + '<br><br><button class="package-btn" onclick="location.reload()">إعادة المحاولة</button></div>';
+            }
+        }
+
+        async function showNotifs() {
+            document.getElementById('dropdownMenu').classList.remove('active');
+            document.querySelector('.overlay').classList.remove('active');
+            const box = document.getElementById('notifList');
+            box.innerHTML = '<div class="empty-cart"><p>جاري التحميل...</p></div>';
+            document.getElementById('notifModal').classList.add('active');
+            try {
+                const r = await Platform.call('notifications');
+                box.innerHTML = r.items.length ? r.items.map(n => `<div class="notif-item ${n.read ? '' : 'unread'}"><h4>${Platform.esc(n.title)}</h4><p>${Platform.esc(n.message)}</p><small>${Platform.esc(Platform.fmtDate(n.createdAt))}</small></div>`).join('') : '<div class="empty-cart"><p>لا توجد إشعارات</p></div>';
+                if (r.items.some(n => !n.read)) { await Platform.call('markRead'); setUnread(0); }
+            } catch (e) { box.innerHTML = '<div class="empty-cart"><p>' + Platform.esc(e.message) + '</p></div>'; }
+        }
+        function closeNotifs() { document.getElementById('notifModal').classList.remove('active'); }
+
+        window.onload = function() {
+            if (!Platform.getCode()) { window.location.href = 'index.html'; return; }
+            updateCartCount();
+            preventBackNavigation();
+            loadHome();
+        };
+
+        function preventBackNavigation() {
+            if (window.history && window.history.pushState) {
+                window.history.pushState(null, null, window.location.href);
+                window.onpopstate = function() { window.history.pushState(null, null, window.location.href); };
+            }
+        }
+
+        function toggleMenu() {
+            const menu = document.getElementById('dropdownMenu');
+            const overlay = document.querySelector('.overlay');
+            menu.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        function logout() {
+            if (confirm('هل تريد تسجيل الخروج؟')) { Platform.logout(); return; }
+            toggleMenu();
+        }
+
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted) {
+                if (!Platform.getCode()) { window.location.href = 'index.html'; } else { loadHome(); }
+            }
+        });
+
+        let currentSlide = 0;
+        const track = document.getElementById('productsTrack');
+        function moveCarousel(direction) {
+            const cards = document.querySelectorAll('.product-card');
+            if (cards.length === 0) return;
+            const cardWidth = cards[0].offsetWidth + 20;
+            const containerWidth = document.querySelector('.carousel-container').offsetWidth;
+            const visibleCards = Math.floor(containerWidth / cardWidth);
+            const maxSlide = cards.length - visibleCards;
+            currentSlide += direction;
+            if (currentSlide < 0) currentSlide = 0;
+            if (currentSlide > maxSlide) currentSlide = maxSlide;
+            track.style.transform = `translateX(${currentSlide * cardWidth}px)`;
+        }
+        window.addEventListener('resize', () => { currentSlide = 0; track.style.transform = `translateX(0px)`; });
+    </script>
+</body>
+</html>

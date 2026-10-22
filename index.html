@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة الأستاذ سامح الفار</title>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
+        
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #f4f6f8;
+            overflow-y: auto;
+        }
+
+        .main-wrapper {
+            display: flex;
+            width: 100%;
+            min-height: 100vh;
+            max-width: 1400px;
+            background: #fff;
+            box-shadow: 0 0 40px rgba(0,0,0,0.05);
+        }
+
+        .right-side {
+            flex: 1;
+            background: url('سجل.png');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            padding: 40px;
+        }
+
+        .right-side::before {
+            content: "";
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 150px;
+            background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
+            pointer-events: none;
+        }
+
+        .right-text {
+            position: relative;
+            z-index: 2;
+            color: #fff;
+            text-align: center;
+            width: 100%;
+        }
+
+        .right-text h2 {
+            font-family: 'Amiri', serif;
+            font-size: 2rem;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .right-text p {
+            font-size: 1rem;
+            opacity: 0.95;
+            text-shadow: 0 1px 5px rgba(0,0,0,0.5);
+        }
+
+        .left-side {
+            flex: 1;
+            padding: 20px 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: #fafbfc;
+            overflow-y: auto;
+        }
+
+        .form-container {
+            width: 100%;
+            max-width: 420px;
+            margin: 0 auto;
+            padding-bottom: 20px;
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .form-header h1 {
+            font-family: 'Amiri', serif;
+            color: #1e293b;
+            font-size: 1.6rem;
+            margin-bottom: 5px;
+        }
+
+        .form-header p {
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+
+        .tabs {
+            display: flex;
+            background: #e2e8f0;
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 15px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: transparent;
+            border-radius: 9px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #64748b;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            background: #fff;
+            color: #0f172a;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .form-section { 
+            display: none;
+            min-height: auto; 
+        }
+        .form-section.active { display: block; animation: fadeIn 0.4s ease-out; }
+
+        .input-group { 
+            margin-bottom: 10px;
+            position: relative; 
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #334155;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            outline: none;
+            transition: all 0.2s;
+            background: #fff;
+            color: #0f172a;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .input-group input.error {
+            border-color: #ef4444;
+            background-color: #fef2f2;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: #0f172a;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            margin-top: 5px;
+            transition: all 0.2s;
+        }
+
+        .btn:hover { background: #1e293b; transform: translateY(-1px); }
+        .btn:active { transform: translateY(0); }
+
+        .message {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            display: none;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        .success { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+        .error { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+        
+        .login-extra {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e2e8f0;
+            text-align: center;
+        }
+
+        .login-extra p {
+            color: #64748b;
+            font-size: 0.8rem;
+            line-height: 1.5;
+        }
+
+        .login-extra .icon {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+            opacity: 0.4;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .code-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 9999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .code-modal-overlay.active {
+            display: flex;
+        }
+
+        .code-modal-box {
+            background: #ffffff;
+            padding: 35px 25px;
+            border-radius: 24px;
+            text-align: center;
+            max-width: 380px;
+            width: 100%;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+            animation: modalPop 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .modal-icon {
+            width: 60px;
+            height: 60px;
+            background: #dcfce7;
+            color: #15803d;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            margin: 0 auto 15px;
+            font-size: 2rem;
+        }
+
+        .code-modal-box h3 {
+            font-family: 'Amiri', serif;
+            font-size: 1.4rem;
+            color: #0f172a;
+            margin-bottom: 15px;
+        }
+
+        .code-label {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 10px;
+        }
+
+        .final-code-display {
+            background: #f8fafc;
+            border: 2px dashed #cbd5e1;
+            padding: 15px 10px;
+            border-radius: 12px;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: 3px;
+            margin-bottom: 15px;
+            direction: ltr;
+            font-family: 'Cairo', sans-serif;
+            user-select: all;
+        }
+
+        .code-note {
+            color: #64748b;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .screenshot-warning {
+            background: #fef3c7;
+            border: 1px solid #fde68a;
+            color: #92400e;
+            padding: 10px 12px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            line-height: 1.5;
+        }
+
+        .screenshot-warning span {
+            color: #dc2626;
+            font-weight: 800;
+        }
+
+        @keyframes modalPop {
+            from { opacity: 0; transform: scale(0.95) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .main-wrapper { flex-direction: column; min-height: auto; }
+            .right-side { 
+                height: 35vh; 
+                min-height: 220px; 
+                padding: 20px; 
+                background-position: center top; 
+            }
+            .right-text h2 { font-size: 1.5rem; }
+            .left-side { padding: 20px; min-height: calc(100vh - 35vh); }
+            .form-section { min-height: auto; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-wrapper">
+    <div class="right-side">
+        <div class="right-text">
+            <h2>منصة الأستاذ وائل الشيخ</h2>
+            <p>معلم اول "English"</p>
+        </div>
+    </div>
+
+    <div class="left-side">
+        <div class="form-container">
+            <div class="form-header">
+                <h1>أهلاً بيك</h1>
+                <p>سجّل بياناتك بدقة لضمان حفظ حسابك</p>
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" onclick="showTab('register')">حساب جديد</button>
+                <button class="tab" onclick="showTab('login')">تسجيل دخول</button>
+            </div>
+
+            <!-- فورم التسجيل -->
+            <div id="register" class="form-section active">
+                <div class="input-group">
+                    <label>اسمك</label>
+                    <input type="text" id="sName" placeholder="اكتب اسمك هنا">
+                </div>
+                <div class="input-group">
+                    <label>اكتب اسم والدك</label>
+                    <input type="text" id="fName" placeholder="اكتب اسم والدك هنا">
+                </div>
+                <div class="input-group">
+                    <label>رقمك</label>
+                    <input type="tel" id="sPhone" placeholder="اكتب رقمك هنا" maxlength="11">
+                </div>
+                <div class="input-group">
+                    <label>اكتب رقم والدك</label>
+                    <input type="tel" id="fPhone" placeholder="اكتب رقم والدك هنا" maxlength="11">
+                </div>
+                <div class="input-group">
+                    <label>عنوانك</label>
+                    <input type="text" id="address" placeholder="المحافظة - المدينة - الشارع">
+                </div>
+                <div class="input-group">
+                    <label>الصف الدراسي</label>
+                    <select id="grade">
+                        <option value="">اختر الصف...</option>
+                        <option value="1">الصف الأول الثانوي</option>
+                        <option value="2">الصف الثاني الثانوي</option>
+                        <option value="3">الصف الثالث الثانوي</option>
+                    </select>
+                </div>
+                <button class="btn" onclick="register()">إنشاء الحساب ودخول المنصة</button>
+                <div id="regMsg" class="message"></div>
+            </div>
+
+            <!-- فورم الدخول -->
+            <div id="login" class="form-section">
+                <div class="input-group">
+                    <label>كود الطالب</label>
+                    <input type="text" id="loginCode" placeholder="أدخل الكود الخاص بك" style="text-transform: uppercase; letter-spacing: 2px; font-weight: 700;">
+                </div>
+                <button class="btn" onclick="login()">دخول للمنصة</button>
+                <div id="loginMsg" class="message"></div>
+                
+                <div class="login-extra">
+                    <div class="icon">🔐</div>
+                    <p>نسيت كود الدخول؟<br>تواصل مع إدارة المنصة لاسترداد الكود الخاص بك</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== مودال عرض الكود ===== -->
+<div class="code-modal-overlay" id="codeModal">
+    <div class="code-modal-box">
+        <div class="modal-icon">🎉</div>
+        <h3>تم إنشاء حسابك بنجاح!</h3>
+        
+        <p class="code-label">الكود بتاعك 👇</p>
+        
+        <div class="final-code-display" id="generatedCodeDisplay">---</div>
+        
+        <p class="code-note">
+            ده كود دخولك للمنصة، سجل بيه في المرة الجاية على طول
+        </p>
+        
+        <div class="screenshot-warning">
+            ⚠️ خد Screenshot للكود خلال <span id="timerNum">7</span> ثواني فقط!
+        </div>
+    </div>
+</div>
+
+<script src="config.js"></script>
+<script src="api.js"></script>
+<script>
+// ===== لو فيه جلسة محفوظة، اتأكد منها من الباك اند وادخل على طول =====
+window.addEventListener('DOMContentLoaded', async function() {
+    let msg = null;
+    try { msg = sessionStorage.getItem('authMsg'); sessionStorage.removeItem('authMsg'); } catch (e) {}
+    if (msg) showMessage('loginMsg', msg, 'error'), showTab('login', true);
+    const code = Platform.getCode();
+    if (!code) return;
+    try {
+        await Platform.raw('login', { code: code });
+        window.location.href = 'home.html';
+    } catch (e) {
+        if (e.code === 'AUTH' || e.code === 'SUSPENDED') { Platform.clear(); if (e.code === 'SUSPENDED') { showTab('login', true); showMessage('loginMsg', e.message, 'error'); } }
+    }
+});
+
+let countdownInterval;
+
+function showTab(tab, silent) {
+    document.querySelectorAll('.form-section').forEach(f => f.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(tab).classList.add('active');
+    document.querySelectorAll('.tab')[tab === 'register' ? 0 : 1].classList.add('active');
+    if (!silent) document.querySelectorAll('.message').forEach(m => m.style.display = 'none');
+    document.querySelectorAll('.input-group input, .input-group select').forEach(input => input.classList.remove('error'));
+}
+
+function validateInputs(sName, fName, sPhone, fPhone, address, grade) {
+    const arabicRegex = /^[؀-ۿ\s]+$/;
+    const phoneRegex = /^01[0125][0-9]{8}$/;
+    if (!arabicRegex.test(sName) || sName.trim().length < 3) return "اسم الطالب يجب أن يكون 3 حروف عربية على الأقل.";
+    if (!arabicRegex.test(fName) || fName.trim().length < 3) return "اسم ولي الأمر يجب أن يكون 3 حروف عربية على الأقل.";
+    if (!phoneRegex.test(sPhone.replace(/\s+/g, ''))) return "رقم هاتف الطالب غير صحيح (يجب أن يبدأ بـ 01 ويتكون من 11 رقم).";
+    if (!phoneRegex.test(fPhone.replace(/\s+/g, ''))) return "رقم هاتف ولي الأمر غير صحيح (يجب أن يبدأ بـ 01 ويتكون من 11 رقم).";
+    if (address.trim().length < 5) return "يرجى كتابة العنوان بالتفصيل (المحافظة - المدينة).";
+    if (!grade) return "يرجى اختيار الصف الدراسي من القائمة.";
+    return null;
+}
+
+async function register() {
+    const btn = event.target;
+    const sName = document.getElementById('sName').value.trim();
+    const fName = document.getElementById('fName').value.trim();
+    const sPhone = document.getElementById('sPhone').value.trim();
+    const fPhone = document.getElementById('fPhone').value.trim();
+    const address = document.getElementById('address').value.trim();
+    const grade = document.getElementById('grade').value;
+
+    const error = validateInputs(sName, fName, sPhone, fPhone, address, grade);
+    if (error) { showMessage('regMsg', error, 'error'); return; }
+
+    await Platform.busy(btn, async function() {
+        try {
+            const r = await Platform.raw('register', { sName, fName, sPhone, fPhone, address, grade });
+            Platform.setCode(r.code);
+            showCodeModal(r.code);
+            ['sName','fName','sPhone','fPhone','address','grade'].forEach(id => document.getElementById(id).value = '');
+        } catch (e) { showMessage('regMsg', e.message, 'error'); }
+    });
+}
+
+function showCodeModal(code) {
+    const modal = document.getElementById('codeModal');
+    const codeDisplay = document.getElementById('generatedCodeDisplay');
+    const timerNum = document.getElementById('timerNum');
+    codeDisplay.textContent = code;
+    modal.classList.add('active');
+    let seconds = 7;
+    timerNum.textContent = seconds;
+    if (countdownInterval) clearInterval(countdownInterval);
+    countdownInterval = setInterval(() => {
+        seconds--;
+        timerNum.textContent = seconds;
+        if (seconds <= 0) { clearInterval(countdownInterval); window.location.href = 'home.html'; }
+    }, 1000);
+}
+
+async function login() {
+    const btn = event.target;
+    const code = document.getElementById('loginCode').value.trim().toUpperCase();
+    const msg = document.getElementById('loginMsg');
+    if (!code) { showMessage('loginMsg', 'يرجى إدخال كود الطالب أولاً', 'error'); return; }
+    await Platform.busy(btn, async function() {
+        try {
+            await Platform.raw('login', { code: code });
+            Platform.setCode(code);
+            msg.className = 'message success';
+            msg.innerHTML = '<strong>✅ تم تسجيل الدخول بنجاح</strong><br>جاري تحويلك للصفحة الرئيسية...';
+            msg.style.display = 'block';
+            setTimeout(() => { window.location.href = 'home.html'; }, 900);
+        } catch (e) {
+            showMessage('loginMsg', e.code === 'AUTH' ? '❌ الكود غير صحيح، تأكد من كتابته بدقة أو تواصل مع الدعم' : e.message, 'error');
+        }
+    });
+}
+
+function showMessage(id, text, type) {
+    const el = document.getElementById(id);
+    el.className = 'message ' + type;
+    el.textContent = text;
+    el.style.display = 'block';
+    setTimeout(() => { el.style.display = 'none'; }, 6000);
+}
+</script>
+
+</body>
+</html>

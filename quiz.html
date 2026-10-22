@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>الامتحان - منصة الأستاذ وائل الشيخ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
+    body { background: #0f172a; min-height: 100vh; padding: 15px; }
+    .container { max-width: 600px; margin: 0 auto; }
+    .top-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .back-btn { background: #334155; color: #f1f5f9; border: none; padding: 8px 14px; border-radius: 8px; font-size: 0.85rem; font-weight: 700; cursor: pointer; text-decoration: none; display: flex; align-items: center; gap: 6px; }
+    .quiz-badge { background: #ef4444; color: white; padding: 6px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; }
+    .info-bar { display: flex; justify-content: space-between; align-items: center; background: #1e293b; padding: 12px 15px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #334155; }
+    .progress-info { color: #f1f5f9; font-size: 0.88rem; font-weight: 700; }
+    .timer { display: flex; align-items: center; gap: 6px; background: #0f172a; padding: 6px 12px; border-radius: 8px; color: #fbbf24; font-size: 0.95rem; font-weight: 800; font-family: monospace; direction: ltr; }
+    .timer.danger { color: #ef4444; animation: pulse 1s infinite; }
+    .timer.submitted { color: #34d399; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+    .progress-bar-container { background: #334155; height: 6px; border-radius: 3px; margin-bottom: 20px; overflow: hidden; }
+    .progress-bar-fill { height: 100%; background: linear-gradient(90deg, #ef4444, #dc2626); border-radius: 3px; transition: width 0.3s; }
+    .question-card { background: #1e293b; border-radius: 14px; padding: 20px; border: 1px solid #334155; margin-bottom: 15px; }
+    .question-image { width: 100%; border-radius: 10px; overflow: hidden; margin-bottom: 18px; background: #0f172a; border: 1px solid #334155; }
+    .question-image-placeholder { width: 100%; aspect-ratio: 16/9; background: linear-gradient(135deg, #1e293b, #334155); display: flex; flex-direction: column; align-items: center; justify-content: center; color: #94a3b8; gap: 10px; padding: 20px; text-align: center; }
+    .question-image-placeholder .q-icon { font-size: 2.5rem; }
+    .question-image-placeholder .q-text { font-size: 1rem; font-weight: 700; color: #f1f5f9; }
+    .question-image-placeholder .q-sub { font-size: 0.85rem; color: #94a3b8; }
+    .options-list { display: flex; flex-direction: column; gap: 10px; }
+    .option-item { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: #0f172a; border: 2px solid #334155; border-radius: 10px; cursor: pointer; transition: all 0.2s; }
+    .option-item:hover:not(.locked) { border-color: #ef4444; background: rgba(239, 68, 68, 0.05); }
+    .option-item.selected { border-color: #ef4444; background: rgba(239, 68, 68, 0.1); }
+    .option-item.locked { cursor: not-allowed; opacity: 0.7; }
+    .option-item.locked:hover { border-color: #334155; background: #0f172a; }
+    .option-item.locked.selected { opacity: 1; border-color: #ef4444; background: rgba(239, 68, 68, 0.15); }
+    .option-radio { width: 22px; height: 22px; border: 2px solid #64748b; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; }
+    .option-item.selected .option-radio { border-color: #ef4444; background: #ef4444; }
+    .option-radio::after { content: ''; width: 8px; height: 8px; background: white; border-radius: 50%; display: none; }
+    .option-item.selected .option-radio::after { display: block; }
+    .option-letter { width: 28px; height: 28px; background: #334155; color: #f1f5f9; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 800; flex-shrink: 0; }
+    .option-item.selected .option-letter { background: #ef4444; }
+    .option-text { color: #e2e8f0; font-size: 0.92rem; font-weight: 600; flex: 1; }
+    .nav-buttons { display: flex; gap: 10px; margin-bottom: 15px; }
+    .nav-btn { flex: 1; padding: 12px; border: none; border-radius: 10px; font-size: 0.9rem; font-weight: 700; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: 'Cairo', sans-serif; }
+    .nav-btn.prev { background: #334155; color: #f1f5f9; }
+    .nav-btn.prev:hover:not(:disabled) { background: #475569; }
+    .nav-btn.next { background: #ef4444; color: white; }
+    .nav-btn.next:hover:not(:disabled) { background: #dc2626; }
+    .nav-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .submit-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, #ef4444, #dc2626); color: white; border: none; border-radius: 10px; font-size: 1rem; font-weight: 800; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: 'Cairo', sans-serif; }
+    .submit-btn:hover:not(.submitted-state) { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(239, 68, 68, 0.4); }
+    .submit-btn.submitted-state { background: #475569; cursor: default; }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(5px); z-index: 9999; display: none; justify-content: center; align-items: center; padding: 20px; }
+    .modal-overlay.active { display: flex; }
+    .modal-box { background: #1e293b; border: 1px solid #334155; border-radius: 20px; padding: 30px; max-width: 400px; width: 100%; text-align: center; animation: slideUp 0.3s; }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    .modal-icon { width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 20px; }
+    .modal-icon.warning { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+    .modal-icon.timeup { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+    .modal-title { color: #f1f5f9; font-size: 1.2rem; font-weight: 800; margin-bottom: 12px; }
+    .modal-message { color: #94a3b8; font-size: 0.92rem; line-height: 1.7; margin-bottom: 25px; }
+    .modal-message strong { color: #f1f5f9; }
+    .modal-buttons { display: flex; gap: 10px; }
+    .modal-btn { flex: 1; padding: 12px; border: none; border-radius: 10px; font-size: 0.9rem; font-weight: 700; cursor: pointer; transition: all 0.2s; font-family: 'Cairo', sans-serif; }
+    .modal-btn.cancel { background: #334155; color: #f1f5f9; }
+    .modal-btn.cancel:hover { background: #475569; }
+    .modal-btn.confirm { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
+    .modal-btn.confirm:hover { transform: translateY(-2px); }
+    @media (min-width: 769px) { body { padding: 20px; } .container { max-width: 700px; } }
+  
+    .q-img { max-width: 100%; max-height: 260px; border-radius: 10px; margin-bottom: 12px; display: block; margin-left: auto; margin-right: auto; }
+    .state-box { color:#94a3b8; text-align:center; padding:40px 10px; line-height:1.9; }
+  </style>
+</head>
+<body>
+
+<div class="container" id="quizContainer">
+  <div class="top-header">
+    <a href="#" class="back-btn" id="backBtn">→ رجوع</a>
+    <span class="quiz-badge" id="quizBadge">...</span>
+  </div>
+
+  <div id="stateBox" class="state-box">جاري التحميل...</div>
+
+  <div id="quizBox" style="display:none">
+    <div class="info-bar">
+      <div class="progress-info">السؤال <span id="currentQ">1</span> من <span id="totalQ">0</span></div>
+      <div class="timer" id="timer" style="display:none"><span>⏱️</span><span id="timerDisplay">0:00</span></div>
+    </div>
+
+    <div class="progress-bar-container">
+      <div class="progress-bar-fill" id="progressFill" style="width: 0%"></div>
+    </div>
+
+    <div class="question-card">
+      <div class="question-image" id="questionImage"></div>
+      <div class="options-list" id="optionsList"></div>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="nav-btn prev" id="prevBtn" onclick="prevQuestion()" disabled>← السابق</button>
+      <button class="nav-btn next" id="nextBtn" onclick="nextQuestion()">التالي →</button>
+    </div>
+
+    <button class="submit-btn" id="submitBtn" onclick="confirmSubmit()">✓ تسليم</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal-box">
+    <div class="modal-icon warning">⚠️</div>
+    <div class="modal-title">تأكيد التسليم</div>
+    <div class="modal-message" id="confirmMessage"></div>
+    <div class="modal-buttons">
+      <button class="modal-btn cancel" onclick="closeModal('confirmModal')">إلغاء</button>
+      <button class="modal-btn confirm" id="confirmBtn" onclick="submitQuiz()">تأكيد التسليم</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="timeupModal">
+  <div class="modal-box">
+    <div class="modal-icon timeup">⏰</div>
+    <div class="modal-title">انتهى الوقت!</div>
+    <div class="modal-message"><strong>سيتم تسليم إجاباتك تلقائياً.</strong></div>
+    <div class="modal-buttons">
+      <button class="modal-btn confirm" onclick="submitQuiz(true)">حسناً</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="resultModal">
+  <div class="modal-box">
+    <div class="modal-icon" id="resultIcon" style="background:rgba(16,185,129,.15);color:#34d399">🎉</div>
+    <div class="modal-title" id="resultTitle">تم التسليم</div>
+    <div class="modal-message" id="resultMsg"></div>
+    <div class="modal-buttons"><button class="modal-btn confirm" onclick="goBack()">رجوع للمحاضرة</button></div>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="api.js"></script>
+<script>
+const quizId = new URLSearchParams(location.search).get('id') || '';
+const KIND_NAME = { quiz: 'الكويز', homework: 'الواجب', exam: 'الامتحان' };
+let data = null, questions = [], answers = {}, current = 0, timeLeft = 0, timerInterval = null, finished = false, submitting = false;
+let backUrl = 'home.html';
+
+function goBack() { location.href = backUrl; }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+function showState(html) { document.getElementById('stateBox').style.display = 'block'; document.getElementById('stateBox').innerHTML = html; document.getElementById('quizBox').style.display = 'none'; }
+
+function showResult(result, auto) {
+  finished = true; clearInterval(timerInterval);
+  closeModal('timeupModal'); closeModal('confirmModal');
+  document.getElementById('resultTitle').textContent = auto ? 'انتهى الوقت وتم التسليم' : 'تم التسليم بنجاح';
+  document.getElementById('resultMsg').innerHTML = result ? 'درجتك: <strong>' + result.score + ' من ' + result.total + ' (' + result.percent + '%)</strong>' : 'تم استلام إجاباتك. هيشوفها المدرس.';
+  document.getElementById('resultModal').classList.add('active');
+}
+
+async function init() {
+  if (!Platform.getCode()) { location.href = 'index.html'; return; }
+  try {
+    data = await Platform.call('quiz', { quizId: quizId });
+    backUrl = 'lesson.html?id=' + encodeURIComponent(data.lessonId);
+    document.getElementById('backBtn').href = backUrl;
+    document.getElementById('quizBadge').textContent = data.quiz.title;
+    document.title = data.quiz.title + ' - منصة الأستاذ وائل الشيخ';
+    if (data.submitted) {
+      const r = data.result;
+      showState('✓ ' + Platform.esc(KIND_NAME[data.quiz.kind] || 'الامتحان') + ' اتسلّم قبل كده.' + (r ? '<br><b style="color:#f1f5f9">درجتك: ' + r.score + ' من ' + r.total + ' (' + r.percent + '%)</b>' : '') + '<br><br><a class="back-btn" style="display:inline-flex" href="' + backUrl + '">رجوع للمحاضرة</a>');
+      return;
+    }
+    questions = data.questions;
+    document.getElementById('stateBox').style.display = 'none';
+    document.getElementById('quizBox').style.display = 'block';
+    document.getElementById('totalQ').textContent = questions.length;
+    document.getElementById('submitBtn').textContent = '✓ تسليم ' + (KIND_NAME[data.quiz.kind] || 'الامتحان');
+    if (data.quiz.timeLimit > 0) {
+      const used = (Date.parse(data.serverNow) - Date.parse(data.startedAt)) / 1000;
+      timeLeft = Math.max(0, Math.round(data.quiz.timeLimit * 60 - used));
+      document.getElementById('timer').style.display = 'flex';
+      startTimer();
+    }
+    renderQuestion();
+  } catch (e) {
+    showState(Platform.esc(e.message) + '<br><br><a class="back-btn" style="display:inline-flex" href="' + backUrl + '">رجوع</a>');
+    if (e.code === 'NO_SUB' || e.code === 'LOCKED' || e.code === 'NOT_FOUND') document.getElementById('backBtn').href = 'home.html';
+  }
+}
+
+function renderQuestion() {
+  const q = questions[current];
+  const img = q.imageUrl ? '<img class="q-img" alt="" src="' + Platform.esc(q.imageUrl) + '">' : '';
+  document.getElementById('questionImage').innerHTML = '<div class="question-image-placeholder">' + img +
+    '<div class="q-icon">📝</div><div class="q-text">سؤال ' + (current + 1) + '</div><div class="q-sub">' + Platform.esc(q.text) + '</div></div>';
+  const letters = ['أ', 'ب', 'ج', 'د', 'هـ', 'و'];
+  document.getElementById('optionsList').innerHTML = q.options.map((opt, i) =>
+    '<div class="option-item ' + (answers[q.id] === i ? 'selected' : '') + '" onclick="selectOption(' + i + ')"><div class="option-radio"></div><div class="option-letter">' + letters[i] + '</div><div class="option-text">' + Platform.esc(opt) + '</div></div>').join('');
+  document.getElementById('currentQ').textContent = current + 1;
+  document.getElementById('progressFill').style.width = ((current + 1) / questions.length * 100) + '%';
+  document.getElementById('prevBtn').disabled = current === 0;
+  document.getElementById('nextBtn').textContent = current === questions.length - 1 ? 'الأخير ✓' : 'التالي →';
+}
+function selectOption(i) { if (finished) return; answers[questions[current].id] = i; renderQuestion(); }
+function nextQuestion() { if (current < questions.length - 1) { current++; renderQuestion(); } }
+function prevQuestion() { if (current > 0) { current--; renderQuestion(); } }
+
+function fmt() { const m = Math.floor(timeLeft / 60), s = timeLeft % 60; document.getElementById('timerDisplay').textContent = m + ':' + String(s).padStart(2, '0'); }
+function startTimer() {
+  fmt();
+  if (timeLeft <= 0) { timeUp(); return; }
+  timerInterval = setInterval(() => {
+    timeLeft--; fmt();
+    if (timeLeft <= 10) document.getElementById('timer').classList.add('danger');
+    if (timeLeft <= 0) { clearInterval(timerInterval); timeUp(); }
+  }, 1000);
+}
+function timeUp() { if (finished) return; document.getElementById('timeupModal').classList.add('active'); }
+
+function confirmSubmit() {
+  const unanswered = questions.filter(q => answers[q.id] === undefined).length;
+  document.getElementById('confirmMessage').innerHTML = unanswered > 0
+    ? '⚠️ لديك <strong>' + unanswered + ' سؤال</strong> لم تُجب عليه بعد.<br><br>هل أنت متأكد من التسليم؟'
+    : 'هل أنت متأكد من التسليم؟ مش هتقدر تعدّل بعد كده.';
+  document.getElementById('confirmModal').classList.add('active');
+}
+
+async function submitQuiz(auto) {
+  if (submitting || finished) return;
+  submitting = true; clearInterval(timerInterval);
+  const btn = document.getElementById('confirmBtn'); btn.disabled = true; btn.textContent = 'جاري التسليم...';
+  try {
+    const r = await Platform.call('submitQuiz', { quizId: quizId, answers: answers });
+    showResult(r.result, auto === true);
+  } catch (e) {
+    submitting = false; btn.disabled = false; btn.textContent = 'تأكيد التسليم';
+    if (e.code === 'DUPLICATE') { showResult(null, false); return; }
+    alert(e.message + '\nجرّب تسلّم تاني.');
+  }
+}
+
+window.addEventListener('beforeunload', function (e) { if (data && !data.submitted && !finished) { e.preventDefault(); e.returnValue = ''; } });
+init();
+</script>
+
+</body>
+</html>

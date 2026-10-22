@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>الملف الشخصي - منصة الأستاذ وائل الشيخ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
+    
+    body {
+      background: #0f172a;
+      min-height: 100vh;
+      padding: 15px;
+      color: #f1f5f9;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .top-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+
+    .back-btn {
+      background: #334155;
+      color: #f1f5f9;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.2s;
+    }
+
+    .back-btn:hover { background: #475569; }
+
+    .page-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #f1f5f9;
+    }
+
+    /* كارت المعلومات الشخصية */
+    .profile-card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 16px;
+      padding: 25px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .avatar {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: white;
+      margin: 0 auto 15px;
+      box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+    }
+
+    .student-name {
+      font-size: 1.4rem;
+      font-weight: 800;
+      margin-bottom: 5px;
+    }
+
+    .student-code {
+      font-size: 0.9rem;
+      color: #94a3b8;
+      font-family: monospace;
+      background: #0f172a;
+      padding: 4px 12px;
+      border-radius: 6px;
+      display: inline-block;
+      margin-bottom: 15px;
+      direction: ltr;
+    }
+
+    .sub-badge {
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sub-badge.active {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .sub-badge.inactive {
+      background: rgba(239, 68, 68, 0.15);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .details-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 20px;
+      text-align: right;
+    }
+
+    .detail-item {
+      background: #0f172a;
+      padding: 12px 15px;
+      border-radius: 10px;
+      border: 1px solid #334155;
+    }
+
+    .detail-item.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .detail-label {
+      font-size: 0.75rem;
+      color: #94a3b8;
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+
+    .detail-value {
+      font-size: 0.95rem;
+      color: #f1f5f9;
+      font-weight: 700;
+    }
+
+    /* ===== قسم الإحصائيات والمستوى المدمج ===== */
+    .progress-section {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      border: 1px solid #334155;
+      border-radius: 20px;
+      padding: 25px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .progress-section::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.06) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 25px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .section-header-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      box-shadow: 0 5px 15px rgba(99, 102, 241, 0.3);
+    }
+
+    .section-header-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #f1f5f9;
+    }
+
+    .section-header-subtitle {
+      font-size: 0.78rem;
+      color: #94a3b8;
+      font-weight: 600;
+    }
+
+    /* المحتوى الرئيسي: دائرة + إحصائيات */
+    .progress-main {
+      display: flex;
+      align-items: center;
+      gap: 25px;
+      margin-bottom: 25px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* الدائرة الدائرية */
+    .circle-container {
+      position: relative;
+      width: 130px;
+      height: 130px;
+      flex-shrink: 0;
+    }
+
+    .circle-svg {
+      transform: rotate(-90deg);
+      width: 100%;
+      height: 100%;
+    }
+
+    .circle-bg {
+      fill: none;
+      stroke: #334155;
+      stroke-width: 10;
+    }
+
+    .circle-progress {
+      fill: none;
+      stroke-width: 10;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 1.5s ease-out, stroke 0.5s;
+    }
+
+    .circle-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+    .circle-percent {
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: #f1f5f9;
+      line-height: 1;
+    }
+
+    .circle-label {
+      font-size: 0.7rem;
+      color: #94a3b8;
+      margin-top: 3px;
+      font-weight: 600;
+    }
+
+    /* الإحصائيات */
+    .stats-grid {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .stat-item {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+      transition: all 0.2s;
+    }
+
+    .stat-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+      transform: translateY(-2px);
+    }
+
+    .stat-icon {
+      font-size: 1.3rem;
+      margin-bottom: 5px;
+    }
+
+    .stat-value {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #f1f5f9;
+      line-height: 1;
+      margin-bottom: 3px;
+    }
+
+    .stat-label {
+      font-size: 0.72rem;
+      color: #94a3b8;
+      font-weight: 600;
+    }
+
+    /* شريط التقدم العام */
+    .progress-bar-section {
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .progress-bar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .progress-bar-label {
+      font-size: 0.85rem;
+      color: #e2e8f0;
+      font-weight: 700;
+    }
+
+    .progress-bar-percent {
+      font-size: 0.9rem;
+      color: #818cf8;
+      font-weight: 800;
+    }
+
+    .progress-bar-bg {
+      width: 100%;
+      height: 8px;
+      background: #334155;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #6366f1, #8b5cf6);
+      border-radius: 4px;
+      transition: width 1s ease-out;
+    }
+
+    /* المستوى الحالي والتالي */
+    .level-info-section {
+      display: flex;
+      gap: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .current-level-box {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 15px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .level-icon {
+      width: 45px;
+      height: 45px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .level-icon.bronze { background: linear-gradient(135deg, #cd7f32, #a0522d); }
+    .level-icon.silver { background: linear-gradient(135deg, #c0c0c0, #808080); }
+    .level-icon.gold { background: linear-gradient(135deg, #ffd700, #ff8c00); }
+    .level-icon.platinum { background: linear-gradient(135deg, #00d4ff, #7b2ff7); }
+    .level-icon.diamond { background: linear-gradient(135deg, #ff00ff, #00ffff); }
+
+    .level-info-text {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .level-info-label {
+      font-size: 0.72rem;
+      color: #94a3b8;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .level-info-name {
+      font-size: 1rem;
+      font-weight: 800;
+      color: #f1f5f9;
+    }
+
+    .next-level-box {
+      flex: 1;
+      background: rgba(99, 102, 241, 0.08);
+      border: 1px solid rgba(99, 102, 241, 0.2);
+      border-radius: 12px;
+      padding: 15px;
+    }
+
+    .next-level-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .next-level-label {
+      font-size: 0.72rem;
+      color: #818cf8;
+      font-weight: 700;
+    }
+
+    .next-level-name {
+      font-size: 0.9rem;
+      color: #f1f5f9;
+      font-weight: 800;
+    }
+
+    .next-level-bar-bg {
+      width: 100%;
+      height: 5px;
+      background: #334155;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+
+    .next-level-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #818cf8, #6366f1);
+      border-radius: 3px;
+      transition: width 1s ease-out;
+    }
+
+    .next-level-remaining {
+      font-size: 0.72rem;
+      color: #94a3b8;
+      text-align: center;
+    }
+
+    .next-level-remaining strong {
+      color: #f1f5f9;
+      font-weight: 800;
+    }
+
+    @media (max-width: 768px) {
+      .details-grid { grid-template-columns: 1fr; }
+      .progress-main { flex-direction: column; gap: 20px; }
+      .circle-container { width: 120px; height: 120px; }
+      .level-info-section { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="top-header">
+    <a href="home.html" class="back-btn">→ رجوع</a>
+    <div class="page-title">الملف الشخصي</div>
+    <div style="width: 70px;"></div>
+  </div>
+
+  <!-- كارت المعلومات الأساسية -->
+  <div class="profile-card">
+    <div class="avatar">👤</div>
+    <div class="student-name" id="studentName">جاري التحميل...</div>
+    <div class="student-code" id="studentCode">---</div>
+    <br>
+    <div class="sub-badge" id="subBadge">
+      <span></span>
+      <span id="subText">جاري التحقق...</span>
+    </div>
+
+    <div class="details-grid">
+      <div class="detail-item">
+        <div class="detail-label">ولي الأمر</div>
+        <div class="detail-value" id="fName">---</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">الصف الدراسي</div>
+        <div class="detail-value" id="grade">---</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">رقم الطالب</div>
+        <div class="detail-value" id="sPhone" style="direction: ltr;">---</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">رقم ولي الأمر</div>
+        <div class="detail-value" id="fPhone" style="direction: ltr;">---</div>
+      </div>
+      <div class="detail-item full-width">
+        <div class="detail-label">العنوان</div>
+        <div class="detail-value" id="address">---</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== قسم الإحصائيات والمستوى المدمج ===== -->
+  <div class="progress-section">
+    <div class="section-header">
+      <div class="section-header-icon">📊</div>
+      <div>
+        <div class="section-header-title">إحصائيات ومستوى الطالب</div>
+        <div class="section-header-subtitle">تتبع تقدمك في الكورس</div>
+      </div>
+    </div>
+
+    <div class="progress-main">
+      <!-- الدائرة الدائرية -->
+      <div class="circle-container">
+        <svg class="circle-svg" viewBox="0 0 120 120">
+          <circle class="circle-bg" cx="60" cy="60" r="50"></circle>
+          <circle class="circle-progress" id="progressCircle" cx="60" cy="60" r="50"
+            stroke-dasharray="314" stroke-dashoffset="314"></circle>
+        </svg>
+        <div class="circle-text">
+          <div class="circle-percent" id="circlePercent">0%</div>
+          <div class="circle-label">الإنجاز</div>
+        </div>
+      </div>
+
+      <!-- الإحصائيات -->
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-icon">📚</div>
+          <div class="stat-value" id="totalLectures">0</div>
+          <div class="stat-label">إجمالي المحاضرات</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-icon">✅</div>
+          <div class="stat-value" id="watchedLectures" style="color: #34d399;">0</div>
+          <div class="stat-label">تمت مشاهدتها</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-icon">⏳</div>
+          <div class="stat-value" id="remainingLectures" style="color: #fbbf24;">0</div>
+          <div class="stat-label">متبقية</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-icon"></div>
+          <div class="stat-value" id="examsTaken" style="color: #818cf8;">0</div>
+          <div class="stat-label">امتحان محلول</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- شريط التقدم -->
+    <div class="progress-bar-section">
+      <div class="progress-bar-header">
+        <span class="progress-bar-label">نسبة إنجاز الكورس</span>
+        <span class="progress-bar-percent" id="progressPercent">0%</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progressBar" style="width: 0%"></div>
+      </div>
+    </div>
+
+    <!-- المستوى الحالي والتالي -->
+    <div class="level-info-section">
+      <div class="current-level-box">
+        <div class="level-icon" id="levelIcon">🥉</div>
+        <div class="level-info-text">
+          <div class="level-info-label">مستواك الحالي</div>
+          <div class="level-info-name" id="levelName">مبتدئ</div>
+        </div>
+      </div>
+
+      <div class="next-level-box">
+        <div class="next-level-header">
+          <span class="next-level-label">المستوى التالي</span>
+          <span class="next-level-name" id="nextLevelName">متابع جيد</span>
+        </div>
+        <div class="next-level-bar-bg">
+          <div class="next-level-bar-fill" id="nextLevelBar" style="width: 0%"></div>
+        </div>
+        <div class="next-level-remaining" id="nextLevelRemaining">
+          باقي <strong>6 محاضرات</strong> للوصول
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="api.js"></script>
+<script>
+const LEVELS = [
+  { min: 0, name: 'مبتدئ', icon: '🥉', class: 'bronze' },
+  { min: 25, name: 'متابع جيد', icon: '🥈', class: 'silver' },
+  { min: 50, name: 'متفوق', icon: '🥇', class: 'gold' },
+  { min: 75, name: 'متميز', icon: '💎', class: 'platinum' },
+  { min: 100, name: 'عبقري', icon: '👑', class: 'diamond' }
+];
+const LEVEL_COLORS = { bronze: '#cd7f32', silver: '#c0c0c0', gold: '#ffd700', platinum: '#00d4ff', diamond: '#ff00ff' };
+
+window.addEventListener('DOMContentLoaded', async () => {
+  if (!Platform.getCode()) { window.location.href = 'index.html'; return; }
+  let r;
+  try { r = await Platform.call('me'); }
+  catch (e) { document.getElementById('studentName').textContent = e.message; return; }
+
+  const u = r.student;
+  document.getElementById('studentName').textContent = u.name;
+  document.getElementById('studentCode').textContent = u.code;
+  document.getElementById('fName').textContent = u.fatherName;
+  document.getElementById('sPhone').textContent = u.phone;
+  document.getElementById('fPhone').textContent = u.fatherPhone;
+  document.getElementById('address').textContent = u.address;
+  document.getElementById('grade').textContent = Platform.gradeName(u.grade);
+
+  const subBadge = document.getElementById('subBadge'), subText = document.getElementById('subText');
+  if (r.subscriptions.length) {
+    subBadge.className = 'sub-badge active';
+    subBadge.querySelector('span').textContent = '✓';
+    subText.textContent = 'مشترك: ' + r.subscriptions.map(s => s.title).join(' + ');
+  } else {
+    subBadge.className = 'sub-badge inactive';
+    subBadge.querySelector('span').textContent = '✕';
+    subText.textContent = 'غير مشترك';
+  }
+
+  const total = r.stats.totalLessons, watched = r.stats.watchedLessons;
+  const overall = total ? Math.round(watched / total * 100) : 0;
+  document.getElementById('totalLectures').textContent = total;
+  document.getElementById('watchedLectures').textContent = watched;
+  document.getElementById('remainingLectures').textContent = Math.max(0, total - watched);
+  document.getElementById('examsTaken').textContent = r.stats.quizzesDone;
+  document.getElementById('progressPercent').textContent = overall + '%';
+  document.getElementById('circlePercent').textContent = overall + '%';
+  setTimeout(() => { document.getElementById('progressBar').style.width = overall + '%'; }, 300);
+
+  let cur = LEVELS[0], next = LEVELS[1];
+  for (let i = LEVELS.length - 1; i >= 0; i--) { if (overall >= LEVELS[i].min) { cur = LEVELS[i]; next = LEVELS[i + 1] || null; break; } }
+  const circle = document.getElementById('progressCircle');
+  circle.style.stroke = LEVEL_COLORS[cur.class];
+  setTimeout(() => { circle.style.strokeDashoffset = 314 - (overall / 100) * 314; }, 300);
+
+  const levelIcon = document.getElementById('levelIcon');
+  levelIcon.className = 'level-icon ' + cur.class;
+  levelIcon.textContent = cur.icon;
+  document.getElementById('levelName').textContent = cur.name;
+
+  if (next) {
+    document.getElementById('nextLevelName').textContent = next.name;
+    const pct = Math.min(100, Math.round(((overall - cur.min) / (next.min - cur.min)) * 100));
+    setTimeout(() => { document.getElementById('nextLevelBar').style.width = pct + '%'; }, 500);
+    const need = Math.max(1, Math.ceil(((next.min - overall) / 100) * total));
+    document.getElementById('nextLevelRemaining').innerHTML = total ? 'باقي <strong>' + need + ' محاضرات</strong> للوصول' : 'اشترك في كورس عشان تبدأ';
+  } else {
+    document.getElementById('nextLevelName').textContent = 'أقصى مستوى';
+    document.getElementById('nextLevelBar').style.width = '100%';
+    document.getElementById('nextLevelRemaining').innerHTML = '<strong>🎉 مبروك! أنت في أعلى مستوى</strong>';
+  }
+});
+</script>
+
+</body>
+</html>

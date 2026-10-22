@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>لوحة تحكم المدرس — وائل الشيخ</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#16222e; --ink2:#2a3947; --muted:#5d6b78; --line:#d6dbe0; --line2:#e7eaed;
+  --bg:#eceff1; --paper:#fff; --accent:#c88a12; --accent-ink:#7a5200;
+  --ok:#17803d; --bad:#b42318; --warn:#9a6700; --r:4px;
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Cairo',system-ui,sans-serif}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);min-height:100vh;font-size:15px;line-height:1.55;font-variant-numeric:tabular-nums}
+button{cursor:pointer;font-family:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+input,select,textarea{font-family:inherit;font-size:.92rem;padding:8px 10px;border:1px solid #b9c1c9;border-radius:var(--r);background:#fff;color:var(--ink);width:100%}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}
+textarea{resize:vertical;min-height:80px}
+label{display:block;font-weight:600;font-size:.84rem;margin:12px 0 4px;color:var(--ink2)}
+input[type=checkbox],input[type=radio]{width:auto;accent-color:var(--ink)}
+.check{display:flex;align-items:flex-start;gap:8px;font-weight:500;margin:12px 0;font-size:.88rem}
+.check input{margin-top:5px}
+.hint{color:var(--muted);font-size:.8rem;margin-top:4px;line-height:1.7}
+
+/* login */
+#login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--bg)}
+.login-box{background:var(--paper);border:1px solid var(--line);border-top:4px solid var(--ink);border-radius:var(--r);padding:28px 24px 24px;width:100%;max-width:360px}
+.login-box h1{font-size:1.2rem;font-weight:700;margin-bottom:2px}
+.login-box p{color:var(--muted);font-size:.85rem;margin-bottom:18px}
+.err{color:var(--bad);font-size:.85rem;font-weight:600;margin-top:10px;min-height:20px}
+
+/* layout */
+#app{display:none;min-height:100vh}
+.side{position:fixed;top:0;right:0;bottom:0;width:200px;background:var(--ink);color:#fff;padding:20px 0 16px;display:flex;flex-direction:column;z-index:50}
+.brand{font-weight:700;font-size:1rem;padding:0 20px 18px;margin-bottom:8px;border-bottom:1px solid rgba(255,255,255,.14)}
+.brand small{display:block;font-weight:400;color:#9fb0bf;font-size:.76rem;margin-top:1px}
+.nav button{display:flex;align-items:center;width:100%;background:none;border:0;border-right:3px solid transparent;color:#c3cfda;padding:10px 20px 10px 14px;font-size:.92rem;font-weight:500;text-align:right}
+.nav button:hover{color:#fff;background:rgba(255,255,255,.06)}
+.nav button.active{color:#fff;font-weight:700;border-right-color:var(--accent);background:rgba(255,255,255,.08)}
+.nav .cnt{margin-right:auto;background:var(--accent);color:#2b1c00;border-radius:3px;font-size:.72rem;padding:0 6px;font-weight:700;font-style:normal;min-width:20px;text-align:center}
+.side .out{margin:auto 20px 0;background:none;border:1px solid rgba(255,255,255,.25);color:#c3cfda;padding:7px;border-radius:var(--r);font-size:.85rem}
+.side .out:hover{color:#fff;border-color:#fff}
+.main{margin-right:200px;padding:26px 30px 60px;max-width:1180px}
+h2.title{font-size:1.3rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+h2.title .sp{flex:1}
+
+/* summary strip */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:0;border-top:1px solid var(--line);border-right:1px solid var(--line);margin-bottom:18px;background:var(--paper)}
+.stat{padding:14px 16px;border-left:1px solid var(--line);border-bottom:1px solid var(--line)}
+.stat b{display:block;font-size:1.65rem;font-weight:700;line-height:1.2}
+.stat span{color:var(--muted);font-size:.82rem}
+
+/* panels */
+.card{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;margin-bottom:16px}
+.card.notice{border-right:4px solid var(--accent)}
+
+/* buttons */
+.btn{border:1px solid var(--ink);border-radius:var(--r);padding:8px 16px;font-weight:600;font-size:.88rem;background:var(--ink);color:#fff}
+.btn:hover{background:var(--ink2)}
+.btn.sm{padding:4px 11px;font-size:.8rem}
+.btn.green{background:var(--ok);border-color:var(--ok)}
+.btn.red{background:#fff;border-color:var(--bad);color:var(--bad)}
+.btn.red:hover{background:var(--bad);color:#fff}
+.btn.gray{background:#fff;border-color:#b9c1c9;color:var(--ink)}
+.btn.gray:hover{border-color:var(--ink)}
+.btn.gold{background:var(--accent);border-color:var(--accent);color:#2b1c00}
+.btn:disabled{opacity:.45;cursor:default}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.row>*{flex:1;min-width:140px}
+.row>.btn{flex:0 0 auto;min-width:0}
+.row label{margin-top:0}
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}.filters>*{flex:1;min-width:130px}
+
+/* tables */
+.tbl-wrap{overflow-x:auto;background:var(--paper);border:1px solid var(--line);border-radius:var(--r)}
+table{width:100%;border-collapse:collapse;font-size:.86rem;min-width:640px}
+th{color:var(--muted);text-align:right;padding:9px 14px;font-weight:600;font-size:.8rem;white-space:nowrap;border-bottom:1px solid var(--ink)}
+td{padding:10px 14px;border-top:1px solid var(--line2);vertical-align:middle}
+tr:first-child td{border-top:0}
+td:first-child,td[dir=ltr]{white-space:nowrap}
+tr.click{cursor:pointer}tr.click:hover td{background:#f5f7f8}
+small{color:var(--muted)}
+.badge{display:inline-block;padding:0 7px;border-radius:3px;font-size:.76rem;font-weight:600;white-space:nowrap;border:1px solid transparent}
+.b-green{color:var(--ok);border-color:#b7dcc4;background:#f1f9f4}
+.b-red{color:var(--bad);border-color:#f0bcb6;background:#fdf3f2}
+.b-yellow{color:var(--warn);border-color:#ecd48e;background:#fdf8e8}
+.b-gray{color:var(--muted);border-color:var(--line);background:#f5f6f7}
+.b-blue{color:var(--ink2);border-color:var(--line);background:#f1f3f5}
+.empty{text-align:center;color:var(--muted);padding:34px 10px}
+.actions{display:flex;gap:6px;flex-wrap:wrap}
+
+/* content manager */
+.crumbs{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:14px;font-weight:600;font-size:.88rem}
+.crumbs a{color:var(--ink2);cursor:pointer;text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
+.crumbs a:hover{text-decoration-color:var(--ink)}.crumbs span{color:var(--muted)}
+.item{display:flex;gap:12px;align-items:center;background:var(--paper);border:1px solid var(--line);margin-bottom:-1px;padding:11px 16px;flex-wrap:wrap}
+.item:first-of-type{border-top-width:1px}
+.item .info{flex:1;min-width:200px}.item .info b{display:block;font-size:.96rem;font-weight:600}.item .info small{font-size:.8rem}
+.item.off{background:#f5f6f7}.item.off .info b{color:var(--muted)}
+.item+.empty,.crumbs+.item{margin-top:0}
+.q-opts{margin:6px 0 0;padding:0;list-style:none;font-size:.86rem;color:var(--ink2)}.q-opts li.ok{color:var(--ok);font-weight:700}
+
+/* modal */
+#modalRoot{position:fixed;inset:0;background:rgba(22,34,46,.5);display:none;align-items:flex-start;justify-content:center;padding:20px 12px;z-index:100;overflow-y:auto}
+#modalRoot.open{display:flex}
+.modal{background:var(--paper);border-radius:6px;width:100%;max-width:540px;padding:20px 22px;margin:auto 0}
+.modal.wide{max-width:820px}
+.modal h3{font-size:1.1rem;font-weight:700;margin-bottom:8px;padding-bottom:10px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px}
+.modal h3 .x{background:none;border:1px solid var(--line);border-radius:var(--r);width:30px;height:30px;font-size:.9rem;color:var(--muted)}
+.modal h3 .x:hover{color:var(--ink);border-color:var(--ink)}
+.modal .foot{display:flex;gap:10px;margin-top:18px;justify-content:flex-start}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0;margin:10px 0;border:1px solid var(--line);border-bottom:0;border-right:0}
+.kv div{padding:7px 11px;font-size:.86rem;border-bottom:1px solid var(--line);border-right:1px solid var(--line)}.kv div small{display:block;font-size:.74rem}
+.sec{border-top:1px solid var(--line);margin-top:16px;padding-top:12px}.sec h4{margin-bottom:8px;font-size:.95rem;font-weight:700}
+.opt-row{display:flex;gap:8px;align-items:center;margin-bottom:7px}.opt-row input[type=text]{flex:1}
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:9px 18px;border-radius:var(--r);font-weight:600;font-size:.88rem;z-index:200;display:none;max-width:90vw}
+#toast.err{background:var(--bad)}#toast.ok{background:var(--ok)}
+
+@media(max-width:860px){
+  #app{flex-direction:column}
+  .side{position:sticky;top:0;width:auto;flex-direction:row;overflow-x:auto;padding:0;align-items:stretch;background:var(--ink)}
+  .brand{display:none}
+  .nav{display:flex}
+  .nav button{width:auto;white-space:nowrap;padding:13px 14px;border-right:0;border-bottom:3px solid transparent}
+  .nav button.active{border-bottom-color:var(--accent);border-right-color:transparent}
+  .nav .cnt{margin-right:6px}
+  .side .out{margin:0 auto 0 0;border:0;border-radius:0;padding:0 14px;white-space:nowrap}
+  .main{margin-right:0;padding:16px 14px 48px}
+  .modal{padding:16px}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<!-- ============ تسجيل دخول الأدمن ============ -->
+<div id="login">
+  <form class="login-box" onsubmit="doLogin(event)">
+    <h1>لوحة تحكم المدرس</h1>
+    <p>منصة الأستاذ وائل الشيخ</p>
+    <input type="password" id="pw" placeholder="باسورد لوحة التحكم" autocomplete="current-password" required>
+    <button class="btn" style="width:100%;margin-top:14px;padding:10px" id="loginBtn">دخول</button>
+    <div class="err" id="loginErr"></div>
+  </form>
+</div>
+
+<!-- ============ التطبيق ============ -->
+<div id="app">
+  <aside class="side">
+    <div class="brand">لوحة التحكم<small>وائل الشيخ</small></div>
+    <nav class="nav" id="nav">
+      <button data-v="dash"><span>الرئيسية</span></button>
+      <button data-v="requests"><span>طلبات الاشتراك</span><i class="cnt" id="cntReq" style="display:none"></i></button>
+      <button data-v="students"><span>الطلاب</span></button>
+      <button data-v="subs"><span>الاشتراكات</span></button>
+      <button data-v="content"><span>المحتوى</span></button>
+      <button data-v="results"><span>الدرجات</span></button>
+      <button data-v="notifs"><span>الإشعارات</span></button>
+      <button data-v="settings"><span>الإعدادات</span></button>
+    </nav>
+    <button class="out" onclick="doLogout()">خروج</button>
+  </aside>
+  <main class="main" id="main"></main>
+</div>
+
+<div id="modalRoot" onclick="if(event.target===this)closeModal()"></div>
+<div id="toast"></div>
+
+<script src="config.js"></script>
+<script src="api.js"></script>
+<script>
+if (typeof Platform === 'undefined') {
+  document.body.innerHTML = '<div style="max-width:520px;margin:60px auto;padding:20px;font-family:Cairo,sans-serif;direction:rtl;line-height:2;background:#fff;border:1px solid #d6dbe0;border-top:4px solid #b42318">الصفحة محتاجة ملفي <b>api.js</b> و <b>config.js</b> يكونوا في <b>نفس الفولدر</b> مع admin.html على الاستضافة. ارفع ملفات الموقع كلها مع بعض (من ملف platform-site.zip) وافتح الصفحة من رابط موقعك مش من الجهاز.</div>';
+  throw new Error('api.js not loaded');
+}
+const $ = s => document.querySelector(s);
+const e = Platform.esc;
+const fmt = Platform.fmtDate;
+let token = ''; try { token = sessionStorage.getItem('adminToken') || ''; } catch (x) {}
+const GRADES = { '1': 'الأول الثانوي', '2': 'الثاني الثانوي', '3': 'الثالث الثانوي', all: 'كل الصفوف' };
+const KINDS = { quiz: 'كويز', homework: 'واجب', exam: 'امتحان' };
+
+/* ---------- أدوات ---------- */
+async function api(action, data) {
+  try { return await Platform.raw(action, Object.assign({ token: token }, data || {})); }
+  catch (err) { if (err.code === 'ADMIN_AUTH' && action !== 'adminLogin' && action !== 'adminChangePassword') { showLogin('انتهت الجلسة، سجّل دخول تاني'); } throw err; }
+}
+let toastT;
+function toast(msg, type) {
+  const t = $('#toast'); t.className = type || ''; t.textContent = msg; t.style.display = 'block';
+  clearTimeout(toastT); toastT = setTimeout(() => t.style.display = 'none', 3200);
+}
+function openModal(title, html, wide) {
+  $('#modalRoot').innerHTML = '<div class="modal ' + (wide ? 'wide' : '') + '"><h3><span>' + e(title) + '</span><button class="x" onclick="closeModal()">✕</button></h3>' + html + '</div>';
+  $('#modalRoot').classList.add('open');
+}
+function closeModal() { $('#modalRoot').classList.remove('open'); $('#modalRoot').innerHTML = ''; }
+async function run(btn, fn) {
+  if (btn) btn.disabled = true;
+  try { return await fn(); } catch (err) { toast(err.message, 'err'); } finally { if (btn) btn.disabled = false; }
+}
+function val(id) { return ($('#' + id) || {}).value || ''; }
+function chk(id) { return !!($('#' + id) || {}).checked; }
+function gradeOpts(sel, all) {
+  return ['1', '2', '3'].concat(all ? ['all'] : []).map(g => '<option value="' + g + '" ' + (String(sel) === g ? 'selected' : '') + '>' + GRADES[g] + '</option>').join('');
+}
+function empty(msg) { return '<div class="empty">' + e(msg) + '</div>'; }
+function table(head, rows, opts) {
+  if (!rows.length) return '<div class="tbl-wrap">' + empty((opts && opts.empty) || 'لا توجد بيانات') + '</div>';
+  return '<div class="tbl-wrap"><table><thead><tr>' + head.map(h => '<th>' + h + '</th>').join('') + '</tr></thead><tbody>' + rows.join('') + '</tbody></table></div>';
+}
+function csvDownload(name, rows) {
+  const csv = '﻿' + rows.map(r => r.map(c => '"' + String(c === null || c === undefined ? '' : c).replace(/"/g, '""') + '"').join(',')).join('\r\n');
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' })); a.download = name; a.click();
+}
+const subBadge = s => s.active ? '<span class="badge b-green">نشط</span>' : (s.status === 'revoked' ? '<span class="badge b-red">ملغي</span>' : '<span class="badge b-gray">منتهي</span>');
+const reqBadge = s => ({ pending: '<span class="badge b-yellow">قيد المراجعة</span>', approved: '<span class="badge b-green">مقبول</span>', rejected: '<span class="badge b-red">مرفوض</span>' }[s] || s);
+const dateOnly = iso => iso ? iso.slice(0, 10) : '';
+
+/* ---------- دخول / خروج ---------- */
+function showLogin(msg) {
+  token = ''; try { sessionStorage.removeItem('adminToken'); } catch (x) {}
+  $('#app').style.display = 'none'; $('#login').style.display = 'flex'; $('#loginErr').textContent = msg || ''; closeModal();
+}
+async function doLogin(ev) {
+  ev.preventDefault();
+  const btn = $('#loginBtn'); btn.disabled = true; $('#loginErr').textContent = '';
+  try {
+    const r = await Platform.raw('adminLogin', { password: $('#pw').value });
+    token = r.token; try { sessionStorage.setItem('adminToken', token); } catch (x) {}
+    $('#pw').value = ''; startApp();
+  } catch (err) { $('#loginErr').textContent = err.message; }
+  finally { btn.disabled = false; }
+}
+async function doLogout() { try { await api('adminLogout'); } catch (x) {} showLogin(''); }
+
+function startApp() {
+  $('#login').style.display = 'none';
+  $('#app').style.display = window.matchMedia('(max-width:860px)').matches ? 'flex' : 'block';
+  go(location.hash.slice(1) || 'dash');
+}
+
+/* ---------- التنقل ---------- */
+const VIEWS = {};
+async function go(v) {
+  if (!VIEWS[v]) v = 'dash';
+  location.hash = v;
+  document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('active', b.dataset.v === v));
+  $('#main').innerHTML = empty('جاري التحميل...');
+  try { await VIEWS[v](); } catch (err) { if (token) $('#main').innerHTML = '<div class="card">' + e(err.message) + '<br><br><button class="btn" onclick="go(\'' + v + '\')">إعادة المحاولة</button></div>'; }
+  refreshCount();
+}
+document.getElementById('nav').addEventListener('click', ev => { const b = ev.target.closest('button'); if (b) go(b.dataset.v); });
+async function refreshCount() {
+  try { const d = await api('adminDashboard'); const c = $('#cntReq'); c.textContent = d.pendingRequests; c.style.display = d.pendingRequests ? 'inline' : 'none'; } catch (x) {}
+}
+
+/* ============ نظرة عامة ============ */
+VIEWS.dash = async function () {
+  const d = await api('adminDashboard');
+  $('#main').innerHTML = '<h2 class="title">الرئيسية</h2>' +
+    (d.pendingRequests ? '<div class="card notice row" style="align-items:center"><div>عندك <b>' + d.pendingRequests + '</b> طلب اشتراك مستني المراجعة.</div><button class="btn sm gold" onclick="go(\'requests\')">راجع الطلبات</button></div>' : '<div class="card">مفيش طلبات اشتراك مستنية.</div>') +
+    '<div class="grid">' + [
+      ['الطلاب', d.students], ['اشتراكات نشطة', d.activeSubs], ['حسابات موقوفة', d.suspended], ['تسليمات الكويزات', d.submissions], ['إجمالي المقبوض (جنيه)', d.revenue],
+      ['الأول الثانوي', d.byGrade['1']], ['الثاني الثانوي', d.byGrade['2']], ['الثالث الثانوي', d.byGrade['3']]
+    ].map(x => '<div class="stat"><b>' + x[1] + '</b><span>' + x[0] + '</span></div>').join('') + '</div>';
+};
+
+/* ============ طلبات الاشتراك ============ */
+let reqFilter = 'pending';
+VIEWS.requests = async function () {
+  const r = await api('adminRequests', reqFilter ? { status: reqFilter } : {});
+  const rows = r.requests.map(q => '<tr><td><b>' + e(q.studentName) + '</b><br><small>' + e(q.code) + ' • ' + e(GRADES[q.grade] || '') + '</small></td>' +
+    '<td>' + e(q.courseTitle) + '</td><td><b>' + e(q.amount) + '</b> ج</td>' +
+    '<td dir="ltr" style="text-align:right">' + e(q.senderPhone) + '</td><td>' + e(q.ref || '—') + '</td><td>' + e(fmt(q.createdAt)) + '</td>' +
+    '<td>' + reqBadge(q.status) + (q.adminNote ? '<br><small>' + e(q.adminNote) + '</small>' : '') + '</td>' +
+    '<td>' + (q.status === 'pending' ? '<div class="actions"><button class="btn sm green" onclick="decide(\'' + q.id + '\',\'approve\',this)">قبول</button><button class="btn sm red" onclick="decide(\'' + q.id + '\',\'reject\',this)">رفض</button></div>' : '') + '</td></tr>');
+  $('#main').innerHTML = '<h2 class="title"> طلبات الاشتراك</h2>' +
+    '<div class="filters"><select onchange="reqFilter=this.value;go(\'requests\')">' + [['pending', 'قيد المراجعة'], ['approved', 'المقبولة'], ['rejected', 'المرفوضة'], ['', 'الكل']].map(o => '<option value="' + o[0] + '" ' + (reqFilter === o[0] ? 'selected' : '') + '>' + o[1] + '</option>').join('') + '</select></div>' +
+    '<p class="hint" style="margin-bottom:10px">قارن الرقم ورقم العملية بتحويلات فودافون كاش على موبايلك، وبعدين اضغط «قبول». الطالب هيوصله إشعار.</p>' +
+    table(['الطالب', 'الباقة', 'المبلغ', 'حوّل من رقم', 'رقم العملية', 'التاريخ', 'الحالة', ''], rows, { empty: 'مفيش طلبات' });
+};
+async function decide(id, decision, btn) {
+  let note = '';
+  if (decision === 'reject') { note = prompt('سبب الرفض (هيظهر للطالب):', 'لم نجد التحويل') ; if (note === null) return; }
+  else if (!confirm('تأكيد قبول الطلب وتفعيل الاشتراك؟')) return;
+  await run(btn, async () => { await api('adminDecide', { id: id, decision: decision, note: note }); toast(decision === 'approve' ? 'تم تفعيل الاشتراك ' : 'تم رفض الطلب', 'ok'); go('requests'); });
+}
+
+/* ============ الطلاب ============ */
+let stuQ = '', stuGrade = '', stuStatus = '';
+VIEWS.students = async function () {
+  const r = await api('adminStudents');
+  window._students = r.students;
+  $('#main').innerHTML = '<h2 class="title"> الطلاب <span class="badge b-blue" id="stuCount"></span></h2>' +
+    '<div class="filters"><input id="sq" placeholder="بحث بالاسم / الكود / التليفون" value="' + e(stuQ) + '" oninput="stuQ=this.value;drawStudents()">' +
+    '<select onchange="stuGrade=this.value;drawStudents()"><option value="">كل الصفوف</option>' + gradeOpts(stuGrade) + '</select>' +
+    '<select onchange="stuStatus=this.value;drawStudents()"><option value="">كل الحالات</option><option value="active" ' + (stuStatus === 'active' ? 'selected' : '') + '>نشط</option><option value="suspended" ' + (stuStatus === 'suspended' ? 'selected' : '') + '>موقوف</option></select></div><div id="stuTbl"></div>';
+  drawStudents();
+};
+function drawStudents() {
+  const q = stuQ.trim().toLowerCase();
+  const list = window._students.filter(s => (!q || (s.name + s.code + s.phone + s.fatherPhone).toLowerCase().includes(q)) && (!stuGrade || s.grade === stuGrade) && (!stuStatus || s.status === stuStatus));
+  $('#stuCount').textContent = list.length;
+  $('#stuTbl').innerHTML = table(['الاسم', 'الكود', 'الصف', 'تليفون الطالب', 'اشتراكات', 'كويزات', 'المتوسط', 'الحالة', 'آخر دخول'],
+    list.map(s => '<tr class="click" onclick="studentModal(\'' + e(s.code) + '\')"><td><b>' + e(s.name) + '</b></td><td dir="ltr" style="text-align:right">' + e(s.code) + '</td><td>' + e(GRADES[s.grade] || s.grade) + '</td><td dir="ltr" style="text-align:right">' + e(s.phone) + '</td><td>' + s.activeSubs + '</td><td>' + s.quizzesDone + '</td><td>' + (s.avgPercent === null ? '—' : s.avgPercent + '%') + '</td><td>' + (s.status === 'suspended' ? '<span class="badge b-red">موقوف</span>' : '<span class="badge b-green">نشط</span>') + '</td><td>' + e(fmt(s.lastLogin)) + '</td></tr>'), { empty: 'مفيش طلاب' });
+}
+
+async function studentModal(code) {
+  const [r, cs] = await Promise.all([api('adminStudent', { code: code }), api('adminList', { entity: 'courses' })]).catch(err => { toast(err.message, 'err'); return []; });
+  if (!r) return;
+  const s = r.student;
+  const susp = s.status === 'suspended';
+  openModal('بيانات الطالب: ' + s.name,
+    '<div class="kv"><div><small>الكود</small><b dir="ltr">' + e(s.code) + '</b></div><div><small>الصف</small>' + e(GRADES[s.grade]) + '</div><div><small>تليفون الطالب</small><span dir="ltr">' + e(s.phone) + '</span></div><div><small>ولي الأمر</small>' + e(s.fatherName) + ' — <span dir="ltr">' + e(s.fatherPhone) + '</span></div><div><small>العنوان</small>' + e(s.address) + '</div><div><small>تاريخ التسجيل</small>' + e(fmt(s.createdAt)) + '</div></div>' +
+    '<div class="sec"><h4>حالة الحساب: ' + (susp ? '<span class="badge b-red">موقوف' + (s.suspendedUntil ? ' حتى ' + e(dateOnly(s.suspendedUntil)) : ' (بدون تاريخ)') + '</span>' : '<span class="badge b-green">نشط</span>') + '</h4>' +
+    (susp ? '<p class="hint">السبب: ' + e(s.suspendReason || '—') + '</p><button class="btn green sm" style="margin-top:8px" onclick="setStatus(\'' + e(s.code) + '\',\'active\',this)">إعادة تفعيل الحساب</button>'
+      : '<div class="row"><div><label>إيقاف حتى تاريخ (اتركه فاضي = إيقاف مفتوح)</label><input type="date" id="suUntil"></div><div><label>السبب (اختياري)</label><input id="suReason" maxlength="150"></div><button class="btn red sm" onclick="setStatus(\'' + e(s.code) + '\',\'suspended\',this)">إيقاف الحساب</button></div>') + '</div>' +
+    '<div class="sec"><h4>الاشتراكات</h4>' + (r.subscriptions.length ? r.subscriptions.map(x => '<div class="item" style="padding:8px 12px"><div class="info"><b>' + e(x.courseTitle) + '</b><small>من ' + e(dateOnly(x.startDate)) + ' • ' + (x.endDate ? 'حتى ' + e(dateOnly(x.endDate)) : 'مفتوح') + '</small></div>' + subBadge(x) + '</div>').join('') : '<p class="hint">مفيش اشتراكات</p>') +
+    '<div class="row" style="margin-top:8px"><select id="gCourse">' + cs.items.filter(c => c.grade === s.grade || c.grade === 'all').map(c => '<option value="' + e(c.id) + '">' + e(c.title) + '</option>').join('') + '</select><input type="number" id="gDays" min="0" placeholder="عدد الأيام (فاضي = الافتراضي)"><button class="btn sm" onclick="grantFrom(\'' + e(s.code) + '\',this)">تفعيل اشتراك</button></div></div>' +
+    '<div class="sec"><h4>الدرجات</h4>' + (r.results.length ? table(['الكورس', 'المحاضرة', 'الاختبار', 'الدرجة', ''], r.results.map(x => '<tr><td>' + e(x.course) + '</td><td>' + e(x.lesson) + '</td><td>' + e(x.quiz) + '</td><td><b>' + e(x.score) + '/' + e(x.total) + '</b> (' + e(x.percent) + '%)' + (x.late === 'TRUE' ? ' <span class="badge b-yellow">متأخر</span>' : '') + '</td><td><button class="btn sm gray" onclick="resultDetail(\'' + e(x.id) + '\')">تفاصيل</button></td></tr>')) : '<p class="hint">لسه ما حلش حاجة</p>') + '</div>' +
+    '<div class="sec"><h4>تعديل البيانات</h4><div class="row"><div><label>الاسم</label><input id="eName" value="' + e(s.name) + '"></div><div><label>الصف</label><select id="eGrade">' + gradeOpts(s.grade) + '</select></div></div>' +
+    '<div class="row"><div><label>تليفون الطالب</label><input id="ePhone" value="' + e(s.phone) + '" maxlength="11"></div><div><label>تليفون ولي الأمر</label><input id="eFPhone" value="' + e(s.fatherPhone) + '" maxlength="11"></div></div>' +
+    '<div class="row"><div><label>اسم ولي الأمر</label><input id="eFName" value="' + e(s.fatherName) + '"></div><div><label>العنوان</label><input id="eAddr" value="' + e(s.address) + '"></div></div>' +
+    '<button class="btn sm" style="margin-top:10px" onclick="saveStudent(\'' + e(s.code) + '\',this)">حفظ التعديلات</button></div>' +
+    '<div class="sec"><h4>إرسال إشعار لهذا الطالب</h4><input id="nTitle" placeholder="العنوان" maxlength="100"><textarea id="nMsg" placeholder="نص الإشعار" style="margin-top:8px"></textarea><button class="btn sm" style="margin-top:8px" onclick="sendNotifTo(\'code:' + e(s.code) + '\',this)">إرسال</button></div>', true);
+}
+async function setStatus(code, status, btn) {
+  await run(btn, async () => {
+    await api('adminSetStatus', { code: code, status: status, until: status === 'suspended' ? val('suUntil') : '', reason: status === 'suspended' ? val('suReason') : '' });
+    toast(status === 'suspended' ? 'تم إيقاف الحساب' : 'تم تفعيل الحساب', 'ok'); closeModal(); go('students');
+  });
+}
+async function grantFrom(code, btn) {
+  await run(btn, async () => { await api('adminGrant', { code: code, courseId: val('gCourse'), days: val('gDays') }); toast('تم تفعيل الاشتراك ', 'ok'); studentModal(code); });
+}
+async function saveStudent(code, btn) {
+  await run(btn, async () => {
+    await api('adminUpdateStudent', { code: code, name: val('eName'), grade: val('eGrade'), phone: val('ePhone'), fatherPhone: val('eFPhone'), fatherName: val('eFName'), address: val('eAddr') });
+    toast('تم الحفظ', 'ok'); go('students');
+  });
+}
+async function sendNotifTo(target, btn) {
+  await run(btn, async () => { await api('adminNotify', { target: target, title: val('nTitle'), message: val('nMsg') }); toast('تم إرسال الإشعار ', 'ok'); $('#nTitle').value = ''; $('#nMsg').value = ''; });
+}
+
+/* ============ الاشتراكات ============ */
+let subCourse = '';
+VIEWS.subs = async function () {
+  const [r, cs, st] = await Promise.all([api('adminSubs', subCourse ? { courseId: subCourse } : {}), api('adminList', { entity: 'courses' }), api('adminStudents')]);
+  $('#main').innerHTML = '<h2 class="title"> الاشتراكات</h2>' +
+    '<div class="card"><b>تفعيل اشتراك يدوي</b><div class="row" style="margin-top:8px"><input id="gCode" list="stList" placeholder="كود الطالب أو اسمه"><datalist id="stList">' + st.students.map(s => '<option value="' + e(s.code) + '">' + e(s.name) + '</option>').join('') + '</datalist><select id="gCourse2">' + cs.items.map(c => '<option value="' + e(c.id) + '">' + e(c.title) + ' (' + e(GRADES[c.grade]) + ')</option>').join('') + '</select><input type="number" min="0" id="gDays2" placeholder="أيام (فاضي = الافتراضي)"><button class="btn" onclick="grantManual(this)">تفعيل</button></div></div>' +
+    '<div class="filters"><select onchange="subCourse=this.value;go(\'subs\')"><option value="">كل الكورسات</option>' + cs.items.map(c => '<option value="' + e(c.id) + '" ' + (subCourse === c.id ? 'selected' : '') + '>' + e(c.title) + '</option>').join('') + '</select></div>' +
+    table(['الطالب', 'الصف', 'الكورس', 'البداية', 'النهاية', 'الحالة', ''], r.subscriptions.map(x => '<tr><td><b>' + e(x.studentName) + '</b><br><small dir="ltr">' + e(x.code) + '</small></td><td>' + e(GRADES[x.grade] || '') + '</td><td>' + e(x.courseTitle) + '</td><td>' + e(dateOnly(x.startDate)) + '</td><td>' + (x.endDate ? e(dateOnly(x.endDate)) : 'مفتوح') + '</td><td>' + subBadge(x) + '</td><td><div class="actions">' +
+      (x.status === 'active' ? '<button class="btn sm red" onclick="subUpd(\'' + x.id + '\',{status:\'revoked\'},this)">إلغاء</button>' : '<button class="btn sm green" onclick="subUpd(\'' + x.id + '\',{status:\'active\'},this)">إعادة تفعيل</button>') +
+      '<button class="btn sm gray" onclick="subDate(\'' + x.id + '\',\'' + e(dateOnly(x.endDate)) + '\')">تعديل النهاية</button></div></td></tr>'), { empty: 'مفيش اشتراكات' });
+};
+async function grantManual(btn) {
+  await run(btn, async () => { await api('adminGrant', { code: val('gCode').trim(), courseId: val('gCourse2'), days: val('gDays2') }); toast('تم تفعيل الاشتراك ', 'ok'); go('subs'); });
+}
+async function subUpd(id, patch, btn) { await run(btn, async () => { await api('adminSubUpdate', Object.assign({ id: id }, patch)); toast('تم', 'ok'); go('subs'); }); }
+function subDate(id, cur) {
+  const d = prompt('تاريخ نهاية الاشتراك (YYYY-MM-DD) — اتركه فاضي لاشتراك مفتوح:', cur || '');
+  if (d === null) return;
+  run(null, async () => { await api('adminSubUpdate', { id: id, endDate: d.trim() }); toast('تم', 'ok'); go('subs'); });
+}
+
+/* ============ المحتوى (كورسات ← محاضرات ← كويزات ← أسئلة) ============ */
+const C = { course: null, lesson: null, quiz: null };
+VIEWS.content = async function () {
+  if (!C.course) return contentCourses();
+  if (!C.lesson) return contentLessons();
+  if (!C.quiz) return contentQuizzes();
+  return contentQuestions();
+};
+function crumbs() {
+  const p = ['<a onclick="C.course=C.lesson=C.quiz=null;go(\'content\')">الكورسات</a>'];
+  if (C.course) p.push('<a onclick="C.lesson=C.quiz=null;go(\'content\')">' + e(C.course.title) + '</a>');
+  if (C.lesson) p.push('<a onclick="C.quiz=null;go(\'content\')">' + e(C.lesson.title) + '</a>');
+  if (C.quiz) p.push('<b>' + e(C.quiz.title) + '</b>');
+  return '<div class="crumbs">' + p.join(' <span>‹</span> ') + '</div>';
+}
+async function move(entity, items, idx, dir) {
+  const j = idx + dir; if (j < 0 || j >= items.length) return;
+  const arr = items.slice(); const t = arr[idx]; arr[idx] = arr[j]; arr[j] = t;
+  try { for (let i = 0; i < arr.length; i++) { if (String(arr[i].order) !== String(i + 1)) await api('adminSave', { entity: entity, item: Object.assign({}, arr[i], { order: i + 1 }) }); } go('content'); }
+  catch (err) { toast(err.message, 'err'); }
+}
+async function delItem(entity, id, msg) {
+  if (!confirm(msg)) return;
+  run(null, async () => { await api('adminDelete', { entity: entity, id: id }); toast('تم الحذف', 'ok'); go('content'); });
+}
+async function toggleActive(entity, item, btn) {
+  await run(btn, async () => { await api('adminSave', { entity: entity, item: Object.assign({}, item, { active: !(item.active === 'TRUE') }) }); go('content'); });
+}
+const arrows = (entity, idx, n) => '<button class="btn sm gray" ' + (idx === 0 ? 'disabled' : '') + ' onclick="move(\'' + entity + '\',window._items,' + idx + ',-1)">▲</button><button class="btn sm gray" ' + (idx === n - 1 ? 'disabled' : '') + ' onclick="move(\'' + entity + '\',window._items,' + idx + ',1)">▼</button>';
+
+/* --- الكورسات --- */
+async function contentCourses() {
+  const r = await api('adminList', { entity: 'courses' }); window._items = r.items;
+  $('#main').innerHTML = '<h2 class="title"> المحتوى <span class="sp"></span><button class="btn" onclick="courseForm()">+ كورس جديد</button></h2>' + crumbs() +
+    (r.items.length ? r.items.map((c, i) => '<div class="item ' + (c.active === 'TRUE' ? '' : 'off') + '"><div class="info"><b>' + e(c.title) + '</b><small>' + e(GRADES[c.grade]) + ' • ' + (c.type === 'term' ? 'باقة ترم' : 'باقة شهر') + ' • ' + e(c.price) + ' جنيه • ' + (Number(c.durationDays) ? e(c.durationDays) + ' يوم' : 'اشتراك مفتوح') + ' • ' + c.lessonsCount + ' محاضرة' + (c.active === 'TRUE' ? '' : ' • <b>مخفي</b>') + '</small></div>' +
+      '<div class="actions">' + arrows('courses', i, r.items.length) + '<button class="btn sm" onclick="openCourse(' + i + ')">فتح المحاضرات</button><button class="btn sm gray" onclick="courseForm(' + i + ')">تعديل</button><button class="btn sm gray" onclick="toggleActive(\'courses\',window._items[' + i + '],this)">' + (c.active === 'TRUE' ? 'إخفاء' : 'إظهار') + '</button><button class="btn sm red" onclick="delItem(\'courses\',\'' + c.id + '\',\'حذف الكورس هيحذف كل محاضراته وكويزاته واشتراكات الطلاب فيه. متأكد؟\')">حذف</button></div></div>').join('') : empty('لسه مفيش كورسات'));
+}
+function openCourse(i) { C.course = window._items[i]; C.lesson = C.quiz = null; go('content'); }
+function courseForm(i) {
+  const c = i === undefined ? { grade: '1', type: 'month', price: 0, durationDays: 0, sequential: 'TRUE', active: 'TRUE' } : window._items[i];
+  openModal(i === undefined ? 'كورس جديد' : 'تعديل الكورس',
+    '<label>اسم الكورس</label><input id="cTitle" value="' + e(c.title || '') + '" maxlength="120" placeholder="مثال: الشهر الثاني — الأول الثانوي">' +
+    '<label>وصف قصير</label><input id="cDesc" value="' + e(c.description || '') + '" maxlength="300">' +
+    '<div class="row"><div><label>الصف</label><select id="cGrade">' + gradeOpts(c.grade, true) + '</select></div><div><label>النوع</label><select id="cType"><option value="month" ' + (c.type === 'month' ? 'selected' : '') + '>باقة شهر</option><option value="term" ' + (c.type === 'term' ? 'selected' : '') + '>باقة ترم</option></select></div></div>' +
+    '<div class="row"><div><label>السعر (جنيه)</label><input type="number" id="cPrice" min="0" value="' + e(c.price) + '"></div><div><label>مدة الاشتراك بالأيام</label><input type="number" id="cDays" min="0" value="' + e(c.durationDays) + '"><div class="hint">0 = اشتراك مفتوح بدون انتهاء</div></div></div>' +
+    '<label>رابط صورة الباقة (اختياري)</label><input id="cImg" value="' + e(c.image || '') + '" placeholder="https://..."><div class="hint">لو فاضي هتظهر الصورة الافتراضية</div>' +
+    '<label class="check"><input type="checkbox" id="cSeq" ' + (c.sequential === 'TRUE' ? 'checked' : '') + '> المحاضرات بتتفتح بالترتيب (لازم الطالب يخلّص واجب وامتحانات المحاضرة اللي قبلها)</label>' +
+    '<label class="check"><input type="checkbox" id="cActive" ' + (c.active === 'TRUE' ? 'checked' : '') + '> ظاهر للطلاب</label>' +
+    '<div class="foot"><button class="btn" onclick="saveCourse(\'' + (c.id || '') + '\',this)">حفظ</button><button class="btn gray" onclick="closeModal()">إلغاء</button></div>');
+}
+async function saveCourse(id, btn) {
+  await run(btn, async () => {
+    const item = { title: val('cTitle'), description: val('cDesc'), grade: val('cGrade'), type: val('cType'), price: val('cPrice'), durationDays: val('cDays'), image: val('cImg'), sequential: chk('cSeq'), active: chk('cActive') };
+    if (id) item.id = id;
+    await api('adminSave', { entity: 'courses', item: item }); closeModal(); toast('تم الحفظ', 'ok'); go('content');
+  });
+}
+
+/* --- المحاضرات --- */
+async function contentLessons() {
+  const r = await api('adminList', { entity: 'lessons', parentId: C.course.id }); window._items = r.items;
+  $('#main').innerHTML = '<h2 class="title">محاضرات: ' + e(C.course.title) + '<span class="sp"></span><button class="btn" onclick="lessonForm()">+ محاضرة جديدة</button></h2>' + crumbs() +
+    (r.items.length ? r.items.map((l, i) => '<div class="item ' + (l.active === 'TRUE' ? '' : 'off') + '"><div class="info"><b>' + (i + 1) + '. ' + e(l.title) + '</b><small>' + (l.videoUrl ? ' فيديو مضاف' : ' بدون فيديو') + ' • ' + l.quizzesCount + ' كويز/واجب/امتحان' + (l.active === 'TRUE' ? '' : ' • <b>مخفية</b>') + '</small></div>' +
+      '<div class="actions">' + arrows('lessons', i, r.items.length) + '<button class="btn sm" onclick="openLesson(' + i + ')">الكويزات والامتحانات</button><button class="btn sm gray" onclick="lessonForm(' + i + ')">تعديل</button><button class="btn sm gray" onclick="toggleActive(\'lessons\',window._items[' + i + '],this)">' + (l.active === 'TRUE' ? 'إخفاء' : 'إظهار') + '</button><button class="btn sm red" onclick="delItem(\'lessons\',\'' + l.id + '\',\'حذف المحاضرة هيحذف كل كويزاتها ونتائج الطلاب فيها. متأكد؟\')">حذف</button></div></div>').join('') : empty('لسه مفيش محاضرات — اضغط «+ محاضرة جديدة»'));
+}
+function openLesson(i) { C.lesson = window._items[i]; C.quiz = null; go('content'); }
+function lessonForm(i) {
+  const l = i === undefined ? { active: 'TRUE' } : window._items[i];
+  openModal(i === undefined ? 'محاضرة جديدة' : 'تعديل المحاضرة',
+    '<label>عنوان المحاضرة</label><input id="lTitle" value="' + e(l.title || '') + '" maxlength="150" placeholder="مثال: المحاضرة الأولى — Present Perfect">' +
+    '<label>وصف / محتوى المحاضرة</label><textarea id="lTopics" maxlength="500" placeholder="مثال: Grammar: Present Perfect | Vocabulary: Unit 1">' + e(l.topics || '') + '</textarea>' +
+    '<label>رابط الفيديو</label><input id="lVideo" dir="ltr" value="' + e(l.videoUrl || '') + '" placeholder="https://youtu.be/...">' +
+    '<div class="hint">ارفع الفيديو من موبايلك على <b>YouTube</b> واختار الظهور <b>«غير مدرج» (Unlisted)</b>، وبعدين انسخ الرابط والصقه هنا. بيشتغل كمان روابط Google Drive (مشاركة لأي شخص معه الرابط) و Vimeo.</div>' +
+    '<label class="check"><input type="checkbox" id="lActive" ' + (l.active === 'TRUE' ? 'checked' : '') + '> ظاهرة للطلاب</label>' +
+    '<div class="foot"><button class="btn" onclick="saveLesson(\'' + (l.id || '') + '\',this)">حفظ</button><button class="btn gray" onclick="closeModal()">إلغاء</button></div>');
+}
+async function saveLesson(id, btn) {
+  await run(btn, async () => {
+    const item = { courseId: C.course.id, title: val('lTitle'), topics: val('lTopics'), videoUrl: val('lVideo').trim(), active: chk('lActive') };
+    if (id) item.id = id;
+    await api('adminSave', { entity: 'lessons', item: item }); closeModal(); toast('تم الحفظ', 'ok'); go('content');
+  });
+}
+
+/* --- الكويزات --- */
+async function contentQuizzes() {
+  const r = await api('adminList', { entity: 'quizzes', parentId: C.lesson.id }); window._items = r.items;
+  $('#main').innerHTML = '<h2 class="title">كويزات: ' + e(C.lesson.title) + '<span class="sp"></span><button class="btn" onclick="quizForm()">+ كويز / واجب / امتحان</button></h2>' + crumbs() +
+    '<p class="hint" style="margin-bottom:10px">تقدر تضيف أكتر من كويز أو واجب أو امتحان على نفس المحاضرة. الطالب لازم يسلّمهم كلهم عشان تتفتح المحاضرة اللي بعدها (لو الكورس بالترتيب).</p>' +
+    (r.items.length ? r.items.map((q, i) => '<div class="item ' + (q.active === 'TRUE' ? '' : 'off') + '"><div class="info"><b>' + e(q.title) + ' <span class="badge b-blue">' + e(KINDS[q.kind]) + '</span></b><small>' + q.questionsCount + ' سؤال • ' + (Number(q.timeLimit) ? e(q.timeLimit) + ' دقيقة' : 'بدون وقت') + ' • ' + (q.showResult === 'TRUE' ? 'الدرجة تظهر للطالب' : 'الدرجة مخفية عن الطالب') + (q.active === 'TRUE' ? '' : ' • <b>مخفي</b>') + '</small></div>' +
+      '<div class="actions">' + arrows('quizzes', i, r.items.length) + '<button class="btn sm" onclick="openQuiz(' + i + ')">الأسئلة</button><button class="btn sm gray" onclick="quizForm(' + i + ')">تعديل</button><button class="btn sm gray" onclick="toggleActive(\'quizzes\',window._items[' + i + '],this)">' + (q.active === 'TRUE' ? 'إخفاء' : 'إظهار') + '</button><button class="btn sm red" onclick="delItem(\'quizzes\',\'' + q.id + '\',\'حذف الكويز هيحذف أسئلته ودرجات الطلاب فيه. متأكد؟\')">حذف</button></div></div>').join('') : empty('لسه مفيش كويزات على المحاضرة دي'));
+}
+function openQuiz(i) { C.quiz = window._items[i]; go('content'); }
+function quizForm(i) {
+  const q = i === undefined ? { kind: 'quiz', timeLimit: 0, showResult: 'TRUE', active: 'TRUE' } : window._items[i];
+  openModal(i === undefined ? 'كويز / واجب / امتحان جديد' : 'تعديل',
+    '<label>العنوان</label><input id="qzTitle" value="' + e(q.title || '') + '" maxlength="150" placeholder="مثال: كويز على الجزء الأول">' +
+    '<div class="row"><div><label>النوع</label><select id="qzKind">' + Object.keys(KINDS).map(k => '<option value="' + k + '" ' + (q.kind === k ? 'selected' : '') + '>' + KINDS[k] + '</option>').join('') + '</select></div><div><label>الوقت بالدقايق</label><input type="number" id="qzTime" min="0" value="' + e(q.timeLimit) + '"><div class="hint">0 = بدون وقت. العداد بيبدأ أول ما الطالب يدخل ومبيقفش.</div></div></div>' +
+    '<label class="check"><input type="checkbox" id="qzShow" ' + (q.showResult === 'TRUE' ? 'checked' : '') + '> إظهار الدرجة للطالب بعد التسليم</label>' +
+    '<label class="check"><input type="checkbox" id="qzActive" ' + (q.active === 'TRUE' ? 'checked' : '') + '> ظاهر للطلاب</label>' +
+    '<div class="foot"><button class="btn" onclick="saveQuiz(\'' + (q.id || '') + '\',this)">حفظ</button><button class="btn gray" onclick="closeModal()">إلغاء</button></div>');
+}
+async function saveQuiz(id, btn) {
+  await run(btn, async () => {
+    const item = { lessonId: C.lesson.id, title: val('qzTitle'), kind: val('qzKind'), timeLimit: val('qzTime'), showResult: chk('qzShow'), active: chk('qzActive') };
+    if (id) item.id = id;
+    await api('adminSave', { entity: 'quizzes', item: item }); closeModal(); toast('تم الحفظ', 'ok'); go('content');
+  });
+}
+
+/* --- الأسئلة --- */
+async function contentQuestions() {
+  const r = await api('adminList', { entity: 'questions', parentId: C.quiz.id }); window._items = r.items;
+  const L = ['أ', 'ب', 'ج', 'د', 'هـ', 'و'];
+  $('#main').innerHTML = '<h2 class="title">أسئلة: ' + e(C.quiz.title) + ' <span class="badge b-blue">' + r.items.length + '</span><span class="sp"></span><button class="btn gray" onclick="bulkForm()">لصق أسئلة كتير</button><button class="btn" onclick="questionForm()">+ سؤال</button></h2>' + crumbs() +
+    (r.items.length ? r.items.map((q, i) => '<div class="item"><div class="info"><b>' + (i + 1) + '. ' + e(q.text) + '</b>' + (q.imageUrl ? '<small> فيه صورة</small>' : '') + '<ol class="q-opts" style="list-style:none;padding:0">' + q.options.map((o, j) => '<li class="' + (j === Number(q.correct) ? 'ok' : '') + '">' + L[j] + ') ' + e(o) + (j === Number(q.correct) ? ' ✓' : '') + '</li>').join('') + '</ol></div>' +
+      '<div class="actions">' + arrows('questions', i, r.items.length) + '<button class="btn sm gray" onclick="questionForm(' + i + ')">تعديل</button><button class="btn sm red" onclick="delItem(\'questions\',\'' + q.id + '\',\'حذف السؤال؟\')">حذف</button></div></div>').join('') : empty('لسه مفيش أسئلة'));
+}
+let optCount = 4;
+function optRow(i, text, correct) {
+  const L = ['أ', 'ب', 'ج', 'د', 'هـ', 'و'];
+  return '<div class="opt-row"><input type="radio" name="correct" value="' + i + '" ' + (correct ? 'checked' : '') + ' title="الإجابة الصحيحة"><b>' + L[i] + '</b><input type="text" class="opt" maxlength="300" value="' + e(text || '') + '" placeholder="الاختيار ' + L[i] + '"></div>';
+}
+function questionForm(i) {
+  const q = i === undefined ? { text: '', imageUrl: '', options: ['', '', '', ''], correct: 0 } : window._items[i];
+  openModal(i === undefined ? 'سؤال جديد' : 'تعديل السؤال',
+    '<label>نص السؤال</label><textarea id="qText" maxlength="1000">' + e(q.text) + '</textarea>' +
+    '<label>رابط صورة للسؤال (اختياري)</label><input id="qImg" dir="ltr" value="' + e(q.imageUrl || '') + '" placeholder="https://...">' +
+    '<label>الاختيارات (علّم على الإجابة الصحيحة)</label><div id="opts">' + q.options.map((o, j) => optRow(j, o, j === Number(q.correct))).join('') + '</div>' +
+    '<button class="btn sm gray" id="addOpt" onclick="addOpt()">+ اختيار</button>' +
+    '<div class="foot"><button class="btn" onclick="saveQuestion(\'' + (q.id || '') + '\',this)">حفظ</button><button class="btn gray" onclick="closeModal()">إلغاء</button></div>');
+}
+function addOpt() {
+  const n = document.querySelectorAll('#opts .opt-row').length; if (n >= 6) return toast('الحد الأقصى 6 اختيارات', 'err');
+  $('#opts').insertAdjacentHTML('beforeend', optRow(n, '', false));
+}
+async function saveQuestion(id, btn) {
+  await run(btn, async () => {
+    const rows = [...document.querySelectorAll('#opts .opt-row')];
+    const options = []; let correct = -1;
+    rows.forEach(r => { const t = r.querySelector('.opt').value.trim(); if (!t) return; if (r.querySelector('input[type=radio]').checked) correct = options.length; options.push(t); });
+    if (options.length < 2) throw new Error('اكتب اختيارين على الأقل');
+    if (correct < 0) throw new Error('علّم على الإجابة الصحيحة (ولازم تكون اختيار مكتوب)');
+    const item = { quizId: C.quiz.id, text: val('qText'), imageUrl: val('qImg').trim(), options: options, correct: correct };
+    if (id) item.id = id;
+    await api('adminSave', { entity: 'questions', item: item }); closeModal(); toast('تم الحفظ', 'ok'); go('content');
+  });
+}
+
+/* لصق أسئلة كتير */
+const LETTER = { 'أ': 0, 'ا': 0, a: 0, 1: 0, 'ب': 1, b: 1, 2: 1, 'ج': 2, c: 2, 3: 2, 'د': 3, d: 3, 4: 3, 'هـ': 4, 'ه': 4, e: 4, 5: 4, 'و': 5, f: 5, 6: 5 };
+function parseBulk(text) {
+  const items = [], errors = [];
+  text.replace(/\r/g, '').split(/\n\s*\n/).map(b => b.trim()).filter(Boolean).forEach((block, n) => {
+    const lines = block.split('\n').map(l => l.trim()).filter(Boolean);
+    const q = []; const opts = []; let ans = null;
+    lines.forEach(l => {
+      let m;
+      if ((m = l.match(/^(?:الإجابة|الاجابة|الجواب|الاجابه|answer|ans)\s*(?:الصحيحة)?\s*[:：\-]?\s*(\S+)/i))) { ans = m[1].replace(/[\)\.]/g, '').toLowerCase(); }
+      else if ((m = l.match(/^(هـ|[أابجدهوA-Fa-f1-6])\s*[\)\.\-:：]\s*(.+)$/)) && (opts.length || q.length)) { opts.push({ k: m[1].toLowerCase(), t: m[2].trim() }); }
+      else if (!opts.length) q.push(l);
+    });
+    const text0 = q.join(' ').replace(/^\d+\s*[\)\.\-]\s*/, '');
+    if (!text0 || opts.length < 2) { errors.push('السؤال رقم ' + (n + 1) + ': لازم نص واختيارين على الأقل'); return; }
+    if (ans === null || LETTER[ans] === undefined || LETTER[ans] >= opts.length) { errors.push('السؤال رقم ' + (n + 1) + ': سطر «الإجابة: ...» ناقص أو غلط'); return; }
+    items.push({ text: text0, options: opts.map(o => o.t), correct: LETTER[ans] });
+  });
+  return { items: items, errors: errors };
+}
+function bulkForm() {
+  openModal('لصق أسئلة كتير مرة واحدة',
+    '<p class="hint">اكتب كل سؤال في فقرة منفصلة (سطر فاضي بين كل سؤال)، وآخر سطر فيه «الإجابة: ب»:</p>' +
+    '<pre dir="rtl" style="background:#f9fafb;padding:10px;border-radius:9px;font-size:.8rem;margin:8px 0;white-space:pre-wrap">What is the past of go?\nأ) goed\nب) went\nج) gone\nد) going\nالإجابة: ب\n\nChoose the correct word: She ___ a doctor.\nأ) is\nب) are\nالإجابة: أ</pre>' +
+    '<textarea id="bulkText" style="min-height:220px" oninput="bulkPreview()"></textarea><div id="bulkInfo" class="hint" style="margin-top:6px"></div>' +
+    '<div class="foot"><button class="btn" id="bulkBtn" onclick="saveBulk(this)" disabled>إضافة الأسئلة</button><button class="btn gray" onclick="closeModal()">إلغاء</button></div>', true);
+}
+function bulkPreview() {
+  const r = parseBulk(val('bulkText'));
+  $('#bulkInfo').innerHTML = ' ' + r.items.length + ' سؤال جاهز' + (r.errors.length ? '<br><span style="color:var(--red)"> ' + r.errors.map(e).join('<br> ') + '</span>' : '');
+  $('#bulkBtn').disabled = !r.items.length || r.errors.length > 0;
+}
+async function saveBulk(btn) {
+  const r = parseBulk(val('bulkText'));
+  await run(btn, async () => { const x = await api('adminBulkQuestions', { quizId: C.quiz.id, items: r.items }); closeModal(); toast('تمت إضافة ' + x.added + ' سؤال ', 'ok'); go('content'); });
+}
+
+/* ============ الدرجات ============ */
+const RF = { courseId: '', quizId: '', grade: '', q: '' };
+VIEWS.results = async function () {
+  const [r, cs, qs] = await Promise.all([api('adminResults', { courseId: RF.courseId, quizId: RF.quizId, grade: RF.grade }), api('adminList', { entity: 'courses' }), api('adminList', { entity: 'quizzes' })]);
+  window._results = r.results;
+  const lessons = (await api('adminList', { entity: 'lessons' })).items;
+  const quizOpts = qs.items.filter(q => !RF.courseId || (lessons.find(l => l.id === q.lessonId) || {}).courseId === RF.courseId);
+  $('#main').innerHTML = '<h2 class="title"> الدرجات <span class="sp"></span><button class="btn gray" onclick="exportResults()">تصدير CSV</button></h2>' +
+    '<div class="filters"><select onchange="RF.courseId=this.value;RF.quizId=\'\';go(\'results\')"><option value="">كل الكورسات</option>' + cs.items.map(c => '<option value="' + e(c.id) + '" ' + (RF.courseId === c.id ? 'selected' : '') + '>' + e(c.title) + '</option>').join('') + '</select>' +
+    '<select onchange="RF.quizId=this.value;go(\'results\')"><option value="">كل الاختبارات</option>' + quizOpts.map(q => '<option value="' + e(q.id) + '" ' + (RF.quizId === q.id ? 'selected' : '') + '>' + e(q.title) + '</option>').join('') + '</select>' +
+    '<select onchange="RF.grade=this.value;go(\'results\')"><option value="">كل الصفوف</option>' + gradeOpts(RF.grade) + '</select>' +
+    '<input placeholder="بحث باسم الطالب أو كوده" value="' + e(RF.q) + '" oninput="RF.q=this.value;drawResults()"></div><div id="resSum"></div><div id="resTbl"></div>';
+  drawResults();
+};
+function filteredResults() { const q = RF.q.trim().toLowerCase(); return window._results.filter(x => !q || (x.studentName + x.code).toLowerCase().includes(q)); }
+function drawResults() {
+  const list = filteredResults();
+  const avg = list.length ? Math.round(list.reduce((a, x) => a + x.percent, 0) / list.length) : 0;
+  $('#resSum').innerHTML = '<p class="hint" style="margin-bottom:8px">' + list.length + ' تسليم • المتوسط ' + avg + '%</p>';
+  $('#resTbl').innerHTML = table(['الطالب', 'الصف', 'الكورس', 'المحاضرة', 'الاختبار', 'الدرجة', 'التاريخ', ''],
+    list.map(x => '<tr><td><b>' + e(x.studentName) + '</b><br><small dir="ltr">' + e(x.code) + '</small></td><td>' + e(GRADES[x.grade] || '') + '</td><td>' + e(x.courseTitle) + '</td><td>' + e(x.lessonTitle) + '</td><td>' + e(x.quizTitle) + '</td><td><b>' + x.score + '/' + x.total + '</b> (' + x.percent + '%)' + (x.late ? ' <span class="badge b-yellow">متأخر</span>' : '') + '</td><td>' + e(fmt(x.submittedAt)) + '</td><td><div class="actions"><button class="btn sm gray" onclick="resultDetail(\'' + e(x.id) + '\')">تفاصيل</button><button class="btn sm red" onclick="delResult(\'' + e(x.id) + '\')">حذف / إعادة محاولة</button></div></td></tr>'), { empty: 'مفيش نتائج' });
+}
+function exportResults() {
+  csvDownload('results.csv', [['الطالب', 'الكود', 'الصف', 'الكورس', 'المحاضرة', 'الاختبار', 'الدرجة', 'من', 'النسبة', 'متأخر', 'التاريخ']].concat(filteredResults().map(x => [x.studentName, x.code, GRADES[x.grade] || '', x.courseTitle, x.lessonTitle, x.quizTitle, x.score, x.total, x.percent + '%', x.late ? 'نعم' : '', x.submittedAt])));
+}
+async function delResult(id) {
+  if (!confirm('حذف النتيجة هيسمح للطالب يحل الاختبار ده من جديد. متأكد؟')) return;
+  run(null, async () => { await api('adminDeleteResult', { id: id }); toast('تم الحذف — الطالب يقدر يعيد المحاولة', 'ok'); closeModal(); go(location.hash.slice(1) === 'students' ? 'students' : 'results'); });
+}
+async function resultDetail(id) {
+  run(null, async () => {
+    const d = await api('adminResultDetail', { id: id }); const L = ['أ', 'ب', 'ج', 'د', 'هـ', 'و'];
+    openModal(d.studentName + ' — ' + d.quizTitle,
+      '<div class="kv"><div><small>الدرجة</small><b>' + d.score + ' / ' + d.total + ' (' + d.percent + '%)</b></div><div><small>بدأ</small>' + e(fmt(d.startedAt)) + '</div><div><small>سلّم</small>' + e(fmt(d.submittedAt)) + (d.late ? ' <span class="badge b-yellow">متأخر</span>' : '') + '</div></div>' +
+      d.questions.map((q, i) => '<div class="item" style="display:block"><b>' + (i + 1) + '. ' + e(q.text) + '</b>' + (q.imageUrl ? '<br><img src="' + e(q.imageUrl) + '" style="max-width:100%;max-height:160px;margin:6px 0;border-radius:8px">' : '') + '<ol style="list-style:none;padding:0;margin-top:6px;font-size:.88rem">' + q.options.map((o, j) => '<li style="padding:3px 0;' + (j === q.correct ? 'color:var(--green);font-weight:800' : (j === q.answer ? 'color:var(--red);font-weight:800' : '')) + '">' + L[j] + ') ' + e(o) + (j === q.correct ? ' ✓' : '') + (j === q.answer ? (j === q.correct ? ' (اختيار الطالب)' : ' ✗ (اختيار الطالب)') : '') + '</li>').join('') + '</ol>' + (q.answer === null ? '<small style="color:var(--red)">لم يُجب</small>' : '') + '</div>').join(''), true);
+  });
+}
+
+/* ============ الإشعارات ============ */
+VIEWS.notifs = async function () {
+  const r = await api('adminNotifications');
+  const lab = t => t === 'all' ? 'كل الطلاب' : t.startsWith('grade:') ? 'صف: ' + GRADES[t.slice(6)] : 'طالب: ' + t.slice(5);
+  $('#main').innerHTML = '<h2 class="title"> الإشعارات</h2><div class="card"><b>إرسال إشعار جديد</b>' +
+    '<label>إلى</label><select id="nTarget" onchange="$(\'#nCodeBox\').style.display=this.value===\'code\'?\'block\':\'none\'"><option value="all">كل الطلاب</option><option value="grade:1">طلاب الأول الثانوي</option><option value="grade:2">طلاب التاني الثانوي</option><option value="grade:3">طلاب التالت الثانوي</option><option value="code">طالب محدد (بالكود)</option></select>' +
+    '<div id="nCodeBox" style="display:none"><label>كود الطالب</label><input id="nCode" dir="ltr" placeholder="AHMD-123456"></div>' +
+    '<label>العنوان</label><input id="nTitle" maxlength="100"><label>النص</label><textarea id="nMsg" maxlength="600"></textarea>' +
+    '<button class="btn" style="margin-top:10px" onclick="sendNotifMain(this)">إرسال</button></div>' +
+    '<h2 class="title" style="font-size:1.05rem">آخر الإشعارات المرسلة</h2>' +
+    (r.items.length ? r.items.map(n => '<div class="item"><div class="info"><b>' + e(n.title) + ' <span class="badge b-gray">' + e(lab(n.target)) + '</span></b><small>' + e(n.message) + '<br>' + e(fmt(n.createdAt)) + '</small></div><button class="btn sm red" onclick="delNotif(\'' + e(n.id) + '\')">حذف</button></div>').join('') : empty('لسه ما بعتش إشعارات'));
+};
+async function sendNotifMain(btn) {
+  let t = val('nTarget'); if (t === 'code') t = 'code:' + val('nCode').trim().toUpperCase();
+  await run(btn, async () => { await api('adminNotify', { target: t, title: val('nTitle'), message: val('nMsg') }); toast('تم إرسال الإشعار ', 'ok'); go('notifs'); });
+}
+async function delNotif(id) { if (!confirm('حذف الإشعار؟ هيختفي عند الطلاب كمان.')) return; run(null, async () => { await api('adminDeleteNotification', { id: id }); go('notifs'); }); }
+
+/* ============ الإعدادات ============ */
+VIEWS.settings = async function () {
+  const r = await api('adminGetSettings'); const s = r.settings;
+  $('#main').innerHTML = '<h2 class="title"> الإعدادات</h2><div class="card"><b>بيانات المنصة</b>' +
+    '<label>رقم فودافون كاش (للتحويل)</label><input id="sVod" dir="ltr" value="' + e(s.vodafoneNumber) + '">' +
+    '<label>رقم الدعم (واتساب)</label><input id="sSup" dir="ltr" value="' + e(s.supportNumber) + '">' +
+    '<label>اسم المدرس</label><input id="sTeacher" value="' + e(s.teacherName) + '">' +
+    '<button class="btn" style="margin-top:12px" onclick="saveSettings(this)">حفظ</button></div>' +
+    '<div class="card"><b>تغيير باسورد لوحة التحكم</b><label>الباسورد الحالي</label><input type="password" id="pOld" autocomplete="current-password"><label>الباسورد الجديد (8 حروف على الأقل)</label><input type="password" id="pNew" autocomplete="new-password"><button class="btn" style="margin-top:12px" onclick="changePw(this)">تغيير</button></div>';
+};
+async function saveSettings(btn) { await run(btn, async () => { await api('adminSaveSettings', { settings: { vodafoneNumber: val('sVod').trim(), supportNumber: val('sSup').trim(), teacherName: val('sTeacher').trim() } }); toast('تم الحفظ', 'ok'); }); }
+async function changePw(btn) { await run(btn, async () => { await api('adminChangePassword', { oldPassword: val('pOld'), newPassword: val('pNew') }); toast('تم تغيير الباسورد ', 'ok'); $('#pOld').value = ''; $('#pNew').value = ''; }); }
+
+/* ---------- تشغيل ---------- */
+if (token) startApp(); else showLogin('');
+</script>
+</body>
+</html>
